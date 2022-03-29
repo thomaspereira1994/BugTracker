@@ -5,6 +5,7 @@ namespace BugTracker.Models
 {
     public class TicketComment
     {
+        //Primary Key
         public int Id { get; set; }
 
         [DisplayName("Member Comment")]
@@ -15,10 +16,11 @@ namespace BugTracker.Models
         public DateTime Created { get; set; }
 
 
+        //Foreign Key
         [DisplayName("Ticket")]
         public int TicketId { get; set; }
 
-
+        //Foreign Key
         [DisplayName("Team Member")]
         public int UserId { get; set; }
 

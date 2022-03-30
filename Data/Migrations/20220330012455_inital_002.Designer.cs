@@ -3,15 +3,17 @@ using System;
 using BugTracker.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace BugTracker.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220330012455_inital_002")]
+    partial class inital_002
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -135,60 +137,7 @@ namespace BugTracker.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Companies");
-                });
-
-            modelBuilder.Entity("BugTracker.Models.Invite", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("CompanyToken")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("InviteDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("InviteeEmail")
-                        .HasColumnType("text");
-
-                    b.Property<string>("InviteeFirstName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("InviteeId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("InviteeLastName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("InvitorId")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsValid")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTimeOffset>("JoinDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("InviteeId");
-
-                    b.HasIndex("InvitorId");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("Invites");
+                    b.ToTable("Company");
                 });
 
             modelBuilder.Entity("BugTracker.Models.Notification", b =>
@@ -230,7 +179,7 @@ namespace BugTracker.Data.Migrations
 
                     b.HasIndex("TicketId");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notification");
                 });
 
             modelBuilder.Entity("BugTracker.Models.Project", b =>
@@ -278,7 +227,7 @@ namespace BugTracker.Data.Migrations
 
                     b.HasIndex("ProjectPriorityId");
 
-                    b.ToTable("Projects");
+                    b.ToTable("Project");
                 });
 
             modelBuilder.Entity("BugTracker.Models.ProjectPriority", b =>
@@ -293,7 +242,7 @@ namespace BugTracker.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProjectPriorities");
+                    b.ToTable("ProjectPriority");
                 });
 
             modelBuilder.Entity("BugTracker.Models.Ticket", b =>
@@ -356,7 +305,7 @@ namespace BugTracker.Data.Migrations
 
                     b.HasIndex("TicketTypeId");
 
-                    b.ToTable("Tickets");
+                    b.ToTable("Ticket");
                 });
 
             modelBuilder.Entity("BugTracker.Models.TicketAttachment", b =>
@@ -393,7 +342,7 @@ namespace BugTracker.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TicketAttachments");
+                    b.ToTable("TicketAttachment");
                 });
 
             modelBuilder.Entity("BugTracker.Models.TicketComment", b =>
@@ -424,7 +373,7 @@ namespace BugTracker.Data.Migrations
 
                     b.HasIndex("UserId1");
 
-                    b.ToTable("TicketComments");
+                    b.ToTable("TicketComment");
                 });
 
             modelBuilder.Entity("BugTracker.Models.TicketHistory", b =>
@@ -461,7 +410,7 @@ namespace BugTracker.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TicketHistories");
+                    b.ToTable("TicketHistory");
                 });
 
             modelBuilder.Entity("BugTracker.Models.TicketPriority", b =>
@@ -476,7 +425,7 @@ namespace BugTracker.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TicketPriorities");
+                    b.ToTable("TicketPriority");
                 });
 
             modelBuilder.Entity("BugTracker.Models.TicketStatus", b =>
@@ -491,7 +440,7 @@ namespace BugTracker.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TicketStatuses");
+                    b.ToTable("TicketStatus");
                 });
 
             modelBuilder.Entity("BugTracker.Models.TicketType", b =>
@@ -506,7 +455,7 @@ namespace BugTracker.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TicketTypes");
+                    b.ToTable("TicketType");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -659,37 +608,6 @@ namespace BugTracker.Data.Migrations
                     b.HasOne("BugTracker.Models.Company", null)
                         .WithMany("Members")
                         .HasForeignKey("CompanyId");
-                });
-
-            modelBuilder.Entity("BugTracker.Models.Invite", b =>
-                {
-                    b.HasOne("BugTracker.Models.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BugTracker.Models.BTUser", "Invitee")
-                        .WithMany()
-                        .HasForeignKey("InviteeId");
-
-                    b.HasOne("BugTracker.Models.BTUser", "Invitor")
-                        .WithMany()
-                        .HasForeignKey("InvitorId");
-
-                    b.HasOne("BugTracker.Models.Project", "Project")
-                        .WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Company");
-
-                    b.Navigation("Invitee");
-
-                    b.Navigation("Invitor");
-
-                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("BugTracker.Models.Notification", b =>

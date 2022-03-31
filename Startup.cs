@@ -34,8 +34,11 @@ namespace BugTracker
                 .AddDefaultUI()
                 .AddDefaultTokenProviders();
 
+            #region CUSTOM SERVICES REGISTRATION
             services.AddScoped<IBTRolesService, BTRolesService>();
-
+            services.AddScoped<IBTCompanyInfoService, BTCompanyInfoService>();
+            services.AddScoped<IBTProjectService, BTProjectService>();
+            #endregion
             services.AddControllersWithViews();
         }
 

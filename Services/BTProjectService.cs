@@ -18,18 +18,47 @@ namespace BugTracker.Services
         private readonly ApplicationDbContext _context;
         private readonly IBTRolesService _rolesService;
         #endregion
+
+        #region CONSTRUCTOR
         public BTProjectService(ApplicationDbContext context, IBTRolesService rolesService)
         {
             _context = context;
             _rolesService = rolesService;
         }
+        #endregion
 
+        #region SERVICE METHODS
+
+        #region CRUD METHODS
+        // CRUD - CREATE
         public async Task AddNewProjectAsync(Project project)
         {
             _context.Add(project);
             await _context.SaveChangesAsync();
         }
-
+        // CRUD - READ
+        public async Task<Project> GetProjectByIdAsync(int projectId, int companyId)
+        {
+            Project project = await _context.Projects.Include(p => p.Tickets)
+                                                     .Include(p => p.Members)
+                                                     .Include(p => p.ProjectPriority)
+                                                     .FirstOrDefaultAsync(p => p.Id == projectId && p.CompanyId == companyId);
+            return project;
+        }
+        //CRUD - UPDATE
+        public async Task UpdateProjectAsync(Project project)
+        {
+            _context.Update(project);
+            await _context.SaveChangesAsync();
+        }
+        //CRUD - ARCHIVE(DELETE)
+        public async Task ArchiveProjectAsync(Project project)
+        {
+            project.Archived = true;
+            _context.Update(project);
+            await _context.SaveChangesAsync();
+        }
+        #endregion
         public async Task<bool> AddProjectManagerAsync(string userId, int projectId)
         {
             BTUser currentProjectManager = await GetProjectManagerAsync(projectId);
@@ -92,13 +121,6 @@ namespace BugTracker.Services
             }
         }
 
-        public async Task ArchiveProjectAsync(Project project)
-        {
-            project.Archived = true;
-            _context.Update(project);
-            await _context.SaveChangesAsync();
-        }
-
         public async Task<List<BTUser>> GetAllProjectMembersExceptPMAsync(int projectId)
         {
             List<BTUser> developers = await GetProjectMembersByRoleAsync(projectId, Roles.Developer.ToString());
@@ -149,14 +171,7 @@ namespace BugTracker.Services
             throw new NotImplementedException();
         }
 
-        public async Task<Project> GetProjectByIdAsync(int projectId, int companyId)
-        {
-            Project project = await _context.Projects.Include(p => p.Tickets)
-                                                     .Include(p => p.Members)
-                                                     .Include(p => p.ProjectPriority)
-                                                     .FirstOrDefaultAsync(p => p.Id == projectId && p.CompanyId == companyId);
-            return project;
-        }
+      
 
         public async Task<BTUser> GetProjectManagerAsync(int projectId)
         {
@@ -330,11 +345,6 @@ namespace BugTracker.Services
                 throw;
             }
         }
-
-        public async Task UpdateProjectAsync(Project project)
-        {
-            _context.Update(project);
-            await _context.SaveChangesAsync();
-        }
+        #endregion
     }
 }

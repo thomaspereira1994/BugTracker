@@ -17,7 +17,7 @@ namespace BugTracker.Models
 
         [Required]
         [DisplayName("Title")]
-        public int Title { get; set; }
+        public string Title { get; set; }
 
         [Required]
         [DisplayName("Message")]

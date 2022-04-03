@@ -30,6 +30,8 @@ namespace BugTracker.Models
         [DisplayName("Archived")]
         public bool Archived { get; set; }
 
+        [DisplayName("Archived By Project")]
+        public bool ArchivedByProject { get; set; }
 
         //Foreign Key
         [DisplayName("Project")]

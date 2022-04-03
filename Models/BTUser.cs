@@ -37,7 +37,7 @@ namespace BugTracker.Models
 
 
         //foreign key
-        public int? CompanyId { get; set; }
+        public int CompanyId { get; set; }
 
 
         //navigation properties

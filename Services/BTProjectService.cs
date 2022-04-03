@@ -54,9 +54,23 @@ namespace BugTracker.Services
         //CRUD - ARCHIVE(DELETE)
         public async Task ArchiveProjectAsync(Project project)
         {
-            project.Archived = true;
-            _context.Update(project);
-            await _context.SaveChangesAsync();
+            try
+            {
+                project.Archived = true;
+                await UpdateProjectAsync(project);
+
+                foreach (Ticket ticket in project.Tickets)
+                {
+                    ticket.ArchivedByProject = true;
+                    _context.Update(ticket);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
         #endregion
         public async Task<bool> AddProjectManagerAsync(string userId, int projectId)
@@ -342,6 +356,27 @@ namespace BugTracker.Services
             catch (Exception exception)
             {
                 Console.WriteLine($"**** ERROR **** - Error removing user from project. ---> {exception.Message}");
+                throw;
+            }
+        }
+
+        public async Task RestoreProjectAsync(Project project)
+        {
+            try
+            {
+                project.Archived = false;
+                await UpdateProjectAsync(project);
+
+                foreach (Ticket ticket in project.Tickets)
+                {
+                    ticket.ArchivedByProject = false;
+                    _context.Update(ticket);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+
                 throw;
             }
         }

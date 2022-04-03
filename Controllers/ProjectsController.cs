@@ -68,6 +68,7 @@ namespace BugTracker.Controllers
 
         #region CREATE
 
+        #region GET
         // GET: Projects/Create
         public async Task<IActionResult> Create()
         {
@@ -82,8 +83,10 @@ namespace BugTracker.Controllers
 
 
             return View(model);
-        }
+        } 
+        #endregion
 
+        #region POST
         // POST: Projects/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -118,13 +121,15 @@ namespace BugTracker.Controllers
                 {
 
                     throw;
-                }                
+                }
             }
             return RedirectToAction("Create");
         }
         #endregion
+        #endregion
 
         #region EDIT
+        #region GET
         // GET: Projects/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -142,7 +147,9 @@ namespace BugTracker.Controllers
 
             return View(model);
         }
+        #endregion
 
+        #region POST
         // POST: Projects/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -175,10 +182,11 @@ namespace BugTracker.Controllers
 
                     throw;
                 }
-                
+
             }
             return RedirectToAction("Edit");
-        }
+        } 
+        #endregion
         #endregion
 
         #region DELETE

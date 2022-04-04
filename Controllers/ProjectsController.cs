@@ -11,10 +11,11 @@ using BugTracker.Extensions;
 using BugTracker.Models.ViewModels;
 using BugTracker.Services.Interfaces;
 using BugTracker.Models.Enums;
+using Microsoft.AspNetCore.Identity;
 
 namespace BugTracker.Controllers
 {
-    public class ProjectsController : Controller
+    public class  ProjectsController : Controller
     {
         #region INJECTION VARIABLES
         private readonly ApplicationDbContext _context;
@@ -22,16 +23,26 @@ namespace BugTracker.Controllers
         private readonly IBTLookUpService _lookUpService;
         private readonly IBTFileService _fileService;
         private readonly IBTProjectService _projectService;
+        private readonly UserManager<BTUser> _userManager;
+        private readonly IBTCompanyInfoService _companyInfoService;
         #endregion
 
         #region CONSTRUCTOR
-        public ProjectsController(ApplicationDbContext context, IBTRolesService rolesService, IBTLookUpService lookUpService, IBTFileService fileService, IBTProjectService projectService)
+        public ProjectsController(ApplicationDbContext context, 
+                                  IBTRolesService rolesService, 
+                                  IBTLookUpService lookUpService, 
+                                  IBTFileService fileService, 
+                                  IBTProjectService projectService,
+                                  UserManager<BTUser> userManager,
+                                  IBTCompanyInfoService companyInfoService)
         {
             _context = context;
             _rolesService = rolesService;
             _lookUpService = lookUpService;
             _fileService = fileService;
             _projectService = projectService;
+            _userManager = userManager;
+            _companyInfoService = companyInfoService;
         }
         #endregion
 
@@ -41,6 +52,33 @@ namespace BugTracker.Controllers
         {
             var applicationDbContext = _context.Projects.Include(p => p.Company).Include(p => p.ProjectPriority);
             return View(await applicationDbContext.ToListAsync());
+        }
+
+        public async Task<IActionResult> MyProjects()
+        {
+            string userId = _userManager.GetUserId(User);
+
+            List<Project> projects = await _projectService.GetUserProjectsAsync(userId);
+
+            return View(projects);
+        }
+
+        public async Task<IActionResult> AllProjects()
+        {
+            List<Project> projects = new();
+
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            if(User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
+            {
+                projects = await _companyInfoService.GetAllProjectsAsync(companyId);
+            }
+            else
+            {
+                projects = await _projectService.GetAllProjectsByCompany(companyId);
+            }
+
+            return View(projects);
         }
         #endregion
 

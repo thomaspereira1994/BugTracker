@@ -31,7 +31,7 @@ namespace BugTracker.Models
 
         [DisplayName("Project End Date")]
         [DataType(DataType.Date)]
-        public DateTimeOffset? EndDate { get; set; }
+        public DateTimeOffset EndDate { get; set; }
 
         [DisplayName("Priority")]
         public int? ProjectPriorityId { get; set; }

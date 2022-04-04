@@ -46,7 +46,7 @@ namespace BugTracker.Controllers
         }
         #endregion
 
-        #region INDEX
+        #region PROJECT VIEWS
         // GET: Projects
         public async Task<IActionResult> Index()
         {
@@ -77,6 +77,15 @@ namespace BugTracker.Controllers
             {
                 projects = await _projectService.GetAllProjectsByCompany(companyId);
             }
+
+            return View(projects);
+        }
+
+        public async Task<IActionResult> ArchivedProjects()
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            List<Project> projects = await _projectService.GetArchivedProjectsByCompany(companyId);
 
             return View(projects);
         }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using BugTracker.Extensions;
+using Microsoft.AspNetCore.Http;
 
 using System;
 using System.ComponentModel;
@@ -15,7 +16,7 @@ namespace BugTracker.Models
         public int TicketId { get; set; }
 
         [DisplayName("File Date")]
-        public DateTime Created { get; set; }
+        public DateTimeOffset Created { get; set; }
 
         [DisplayName("Team Member")]
         public string UserId { get; set; }
@@ -25,7 +26,10 @@ namespace BugTracker.Models
 
 
         [NotMapped]
+        [DisplayName("Select a file")]
         [DataType(DataType.Upload)]
+        [MaxFileSize(1024*1024)]
+        [AllowedExtensions(new string[] { ".jpg", ".png", ".doc", ".docx", ".xls", ".xlsx", ".pdf" })]
         public IFormFile FormFile { get; set; }
 
 

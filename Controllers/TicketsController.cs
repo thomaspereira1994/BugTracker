@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using BugTracker.Services.Interfaces;
 using BugTracker.Models.Enums;
 using BugTracker.Extensions;
+using System.IO;
 
 namespace BugTracker.Controllers
 {
@@ -22,16 +23,18 @@ namespace BugTracker.Controllers
         private readonly IBTProjectService _projectService;
         private readonly IBTLookUpService _lookUpService;
         private readonly IBTTicketService _ticketService;
+        private readonly IBTFileService _fileService;
         #endregion
 
         #region CONSTRUCTOR
-        public TicketsController(ApplicationDbContext context, UserManager<BTUser> userManager, IBTProjectService projectService, IBTLookUpService lookUpService, IBTTicketService ticketService)
+        public TicketsController(ApplicationDbContext context, UserManager<BTUser> userManager, IBTProjectService projectService, IBTLookUpService lookUpService, IBTTicketService ticketService, IBTFileService fileService)
         {
             _context = context;
             _userManager = userManager;
             _projectService = projectService;
             _lookUpService = lookUpService;
             _ticketService = ticketService;
+            _fileService = fileService;
         }
 
         #endregion
@@ -242,6 +245,7 @@ namespace BugTracker.Controllers
         }
         #endregion
 
+        #region ADD TICKET COMMENT
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddTicketComment([Bind("Id,TicketId,Comment")] TicketComment ticketComment)
@@ -254,7 +258,7 @@ namespace BugTracker.Controllers
                     ticketComment.Created = DateTimeOffset.Now;
 
                     await _ticketService.AddTicketCommentAsync(ticketComment);
-                   
+
                 }
                 catch (Exception)
                 {
@@ -265,6 +269,36 @@ namespace BugTracker.Controllers
 
             return RedirectToAction("Details", new { id = ticketComment.TicketId });
         }
+        #endregion
+
+        #region ADD TICKET ATTACHMENT
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddTicketAttachment([Bind("Id,FormFile,Description,TicketId")] TicketAttachment ticketAttachment)
+        {
+            string statusMessage;
+
+            if(ModelState.IsValid && ticketAttachment.FormFile != null)
+            {
+                ticketAttachment.FileData = await _fileService.ConvertFileToByArrayAsync(ticketAttachment.FormFile);
+                ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
+                ticketAttachment.FileContentType = ticketAttachment.FormFile.ContentType;
+
+                ticketAttachment.Created = DateTimeOffset.Now;
+                ticketAttachment.UserId = _userManager.GetUserId(User);
+
+                await _ticketService.AddTicketAttachmentAsync(ticketAttachment);
+
+                statusMessage = "Success: New attachment added to Ticket.";
+            }
+            else
+            {
+                statusMessage = "Error: Invalid data.";
+            }
+
+            return RedirectToAction("Details", new { id = ticketAttachment.TicketId, message = statusMessage });
+        }
+        #endregion
 
         #region ARCHIVE
         // GET: Tickets/Archive/5
@@ -344,6 +378,21 @@ namespace BugTracker.Controllers
             int companyId = User.Identity.GetCompanyId().Value;
 
             return (await _ticketService.GetAllTicketsByCompanyAsync(companyId)).Any(t => t.Id == id);
+        }
+        #endregion
+
+        #region SHOW FILE
+        public async Task<IActionResult> ShowFile(int id)
+        {
+            TicketAttachment ticketAttachment = await _ticketService.GetTicketAttachmentByIdAsync(id);
+
+            string fileName = ticketAttachment.FileName;
+            byte[] fileData = ticketAttachment.FileData;
+            string ext = Path.GetExtension(fileName).Replace(".", "");
+
+            Response.Headers.Add("Content-Disposition", $"inline; filename={fileName}");
+
+            return File(fileData, $"application/{ext}");
         }
         #endregion
     }

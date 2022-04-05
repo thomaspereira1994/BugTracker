@@ -18,6 +18,8 @@ namespace BugTracker.Services.Interfaces
         //READ
         Task<Ticket> GetTicketByIdAsync(int ticketId);
 
+        Task<TicketAttachment> GetTicketAttachmentByIdAsync(int ticketAttachmentId);
+
         //DELETE (ARCHIVE)
         Task ArchiveTicketAsync(Ticket ticket);
         //RESTORE FROM ARCHIVED
@@ -25,6 +27,7 @@ namespace BugTracker.Services.Interfaces
         #endregion
 
         Task AddTicketCommentAsync(TicketComment ticketComment);
+        Task AddTicketAttachmentAsync(TicketAttachment ticketAttachment);
 
         Task AssignTicketAsync(int ticketId, string userId);
         Task<List<Ticket>> GetArchivedTicketsAsync(int companyId);

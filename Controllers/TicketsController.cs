@@ -51,6 +51,7 @@ namespace BugTracker.Controllers
         }
         #endregion
 
+        #region DETAILS
         // GET: Tickets/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -73,7 +74,8 @@ namespace BugTracker.Controllers
             }
 
             return View(ticket);
-        }
+        } 
+        #endregion
 
         #region CREATE
         // GET: Tickets/Create
@@ -203,25 +205,22 @@ namespace BugTracker.Controllers
             ViewData["TicketTypeId"] = new SelectList(await _lookUpService.GetTicketTypesAsync(), "Id", "Name", ticket.TicketTypeId);
 
             return View(ticket);
-        } 
+        }
         #endregion
 
-        // GET: Tickets/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        #region ARCHIVE
+        // GET: Tickets/Archive/5
+        public async Task<IActionResult> Archive(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var ticket = await _context.Tickets
-                .Include(t => t.DeveloperUser)
-                .Include(t => t.OwnerUser)
-                .Include(t => t.Project)
-                .Include(t => t.TicketPriority)
-                .Include(t => t.TicketStatus)
-                .Include(t => t.TicketType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            Ticket ticket = await _ticketService.GetTicketByIdAsync(id.Value);
+
             if (ticket == null)
             {
                 return NotFound();
@@ -231,21 +230,63 @@ namespace BugTracker.Controllers
         }
 
         // POST: Tickets/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> ArchiveConfirmed(int id)
         {
-            var ticket = await _context.Tickets.FindAsync(id);
-            _context.Tickets.Remove(ticket);
-            await _context.SaveChangesAsync();
+            Ticket ticket = await _ticketService.GetTicketByIdAsync(id);
+
+            await _ticketService.ArchiveTicketAsync(ticket);
+
             return RedirectToAction(nameof(Index));
         }
+        #endregion
 
+        #region RESTORE
+        #region GET
+        // GET: Tickets/Restore/5
+        public async Task<IActionResult> Restore(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            Ticket ticket = await _ticketService.GetTicketByIdAsync(id.Value);
+
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+
+            return View(ticket);
+        }
+        #endregion
+
+        #region POST
+        // POST: Tickets/Restore/5
+        [HttpPost, ActionName("Restore")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RestoreConfirmed(int id)
+        {
+            Ticket ticket = await _ticketService.GetTicketByIdAsync(id);
+
+            await _ticketService.RestoreTicketAsync(ticket);
+
+            return RedirectToAction(nameof(Index));
+        }  
+        #endregion
+        #endregion
+
+        #region DOES TICKET EXIST
         private async Task<bool> TicketExists(int id)
         {
             int companyId = User.Identity.GetCompanyId().Value;
 
             return (await _ticketService.GetAllTicketsByCompanyAsync(companyId)).Any(t => t.Id == id);
-        }
+        } 
+        #endregion
     }
 }

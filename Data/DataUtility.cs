@@ -77,7 +77,6 @@ namespace BugTracker.Data
             await SeedDefautTicketsAsync(dbContextSvc);
         }
 
-
         public static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
         {
             //Seed Roles
@@ -219,8 +218,6 @@ namespace BugTracker.Data
                 throw;
             }
         }
-
-
 
         public static async Task SeedDefaultUsersAsync(UserManager<BTUser> userManager)
         {
@@ -723,8 +720,6 @@ namespace BugTracker.Data
             }
         }
 
-
-
         public static async Task SeedDefaultTicketTypeAsync(ApplicationDbContext context)
         {
             try
@@ -804,8 +799,6 @@ namespace BugTracker.Data
                 throw;
             }
         }
-
-
 
         public static async Task SeedDefautTicketsAsync(ApplicationDbContext context)
         {

@@ -248,7 +248,7 @@ namespace BugTracker.Controllers
 
             int companyId = User.Identity.GetCompanyId().Value;
 
-            var project = await _projectService.GetProjectByIdAsync(id.Value, companyId);
+            Project project = await _projectService.GetProjectByIdAsync(id.Value, companyId);
 
             if (project == null)
             {

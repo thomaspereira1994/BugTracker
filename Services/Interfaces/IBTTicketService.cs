@@ -20,6 +20,8 @@ namespace BugTracker.Services.Interfaces
 
         //DELETE (ARCHIVE)
         Task ArchiveTicketAsync(Ticket ticket);
+        //RESTORE FROM ARCHIVED
+        Task RestoreTicketAsync(Ticket ticket);
         #endregion
 
         Task AssignTicketAsync(int ticketId, string userId);

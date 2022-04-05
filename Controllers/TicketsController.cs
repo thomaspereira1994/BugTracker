@@ -51,6 +51,44 @@ namespace BugTracker.Controllers
         }
         #endregion
 
+        #region MY TICKETS
+        public async Task<IActionResult> MyTickets()
+        {
+            BTUser btUser = await _userManager.GetUserAsync(User);
+
+            List<Ticket> tickets = await _ticketService.GetTicketsByUserIdAsync(btUser.Id, btUser.CompanyId);
+
+            return View(tickets);
+        }
+        #endregion
+
+        #region ALL TICKETS
+        public async Task<IActionResult> AllTickets()
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            List<Ticket> tickets = await _ticketService.GetAllTicketsByCompanyAsync(companyId);
+
+            if (User.IsInRole(nameof(Roles.Developer)) || User.IsInRole(nameof(Roles.Submitter)))
+            {
+                return View(tickets.Where(t => !t.Archived));
+            }
+            else
+            {
+                return View(tickets);
+            }
+        } 
+        #endregion
+
+        public async Task<IActionResult> ArchivedTickets()
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            List<Ticket> tickets = await _ticketService.GetArchivedTicketsAsync(companyId);
+
+            return View(tickets);
+        }
+
         #region DETAILS
         // GET: Tickets/Details/5
         public async Task<IActionResult> Details(int? id)

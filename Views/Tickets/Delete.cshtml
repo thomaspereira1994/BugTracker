@@ -42,16 +42,22 @@
             @Html.DisplayFor(model => model.Archived)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TicketTypeId)
+            @Html.DisplayNameFor(model => model.ArchivedByProject)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TicketTypeId)
+            @Html.DisplayFor(model => model.ArchivedByProject)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Project)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Project.Name)
+        </dd class>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TicketType)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TicketType.Id)
         </dd class>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.TicketPriority)

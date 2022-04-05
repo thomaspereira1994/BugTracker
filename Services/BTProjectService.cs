@@ -177,24 +177,27 @@ namespace BugTracker.Services
         #endregion
 
         #region GET ALL PROJECTS BY COMPANY
-        public async Task<List<Project>> GetAllProjectsByCompany(int companyId)
+        public async Task<List<Project>> GetAllProjectsByCompanyAsync(int companyId)
         {
             try
             {
-                List<Project> projectsList = new();
-                projectsList = await _context.Projects.Where(c => c.Id == companyId && c.Archived == false).Include(p => p.Members)
-                                                                                                           .Include(p => p.Tickets).ThenInclude(t => t.Comments)
-                                                                                                           .Include(p => p.Tickets).ThenInclude(t => t.Attachments)
-                                                                                                           .Include(p => p.Tickets).ThenInclude(t => t.History)
-                                                                                                           .Include(p => p.Tickets).ThenInclude(t => t.DeveloperUser)
-                                                                                                           .Include(p => p.Tickets).ThenInclude(t => t.OwnerUser)
-                                                                                                           .Include(p => p.Tickets).ThenInclude(t => t.Notifications)
-                                                                                                           .Include(p => p.Tickets).ThenInclude(t => t.TicketStatus)
-                                                                                                           .Include(p => p.Tickets).ThenInclude(t => t.TicketPriority)
-                                                                                                           .Include(p => p.Tickets).ThenInclude(t => t.TicketType)
-                                                                                                           .Include(p => p.ProjectPriority)
-                                                                                                           .ToListAsync();
-                return projectsList;
+                List<Project> projects = new();
+
+                projects = await _context.Projects.Where(p => p.CompanyId == companyId && p.Archived == false)
+                                                  .Include(p => p.Members)
+                                                  .Include(p => p.Tickets).ThenInclude(t => t.Comments)
+                                                  .Include(p => p.Tickets).ThenInclude(t => t.Attachments)
+                                                  .Include(p => p.Tickets).ThenInclude(t => t.History)
+                                                  .Include(p => p.Tickets).ThenInclude(t => t.Notifications)
+                                                  .Include(p => p.Tickets).ThenInclude(t => t.DeveloperUser)
+                                                  .Include(p => p.Tickets).ThenInclude(t => t.OwnerUser)
+                                                  .Include(p => p.Tickets).ThenInclude(p => p.TicketStatus)
+                                                  .Include(p => p.Tickets).ThenInclude(t => t.TicketPriority)
+                                                  .Include(p => p.Tickets).ThenInclude(t => t.TicketType)
+                                                  .Include(p => p.ProjectPriority)
+                                                  .ToListAsync();
+
+                return projects;
             }
             catch (Exception)
             {
@@ -209,7 +212,7 @@ namespace BugTracker.Services
         #region GET ALL PROJECTS BY PRIORITY
         public async Task<List<Project>> GetAllProjectsByPriority(int companyId, string priorityName)
         {
-            List<Project> projectsList = await GetAllProjectsByCompany(companyId);
+            List<Project> projectsList = await GetAllProjectsByCompanyAsync(companyId);
             int priorityId = await LookupProjectPriorityId(priorityName);
 
             return projectsList.Where(p => p.ProjectPriorityId == priorityId).ToList();

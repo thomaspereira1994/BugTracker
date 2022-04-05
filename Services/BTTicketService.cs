@@ -376,17 +376,17 @@ namespace BugTracker.Services
             {
                 if (await _rolesService.IsUserInRoleAsync(bTUser, Roles.Admin.ToString()))
                 {
-                    ticketsList = (await _projectsService.GetAllProjectsByCompany(companyId)).SelectMany(p => p.Tickets).ToList();
+                    ticketsList = (await _projectsService.GetAllProjectsByCompanyAsync(companyId)).SelectMany(p => p.Tickets).ToList();
                 }
                 else if (await _rolesService.IsUserInRoleAsync(bTUser, Roles.Developer.ToString()))
                 {
-                    ticketsList = (await _projectsService.GetAllProjectsByCompany(companyId)).SelectMany(p => p.Tickets)
+                    ticketsList = (await _projectsService.GetAllProjectsByCompanyAsync(companyId)).SelectMany(p => p.Tickets)
                                                                                              .Where(t => t.DeveloperUserId == userId).ToList();
                 }
 
                 else if (await _rolesService.IsUserInRoleAsync(bTUser, Roles.Submitter.ToString()))
                 {
-                    ticketsList = (await _projectsService.GetAllProjectsByCompany(companyId)).SelectMany(p => p.Tickets)
+                    ticketsList = (await _projectsService.GetAllProjectsByCompanyAsync(companyId)).SelectMany(p => p.Tickets)
                                                                                              .Where(t => t.OwnerUserId == userId).ToList();
                 }
                 else if (await _rolesService.IsUserInRoleAsync(bTUser, Roles.ProjectManager.ToString()))

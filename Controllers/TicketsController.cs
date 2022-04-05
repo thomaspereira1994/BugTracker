@@ -77,7 +77,7 @@ namespace BugTracker.Controllers
             {
                 return View(tickets);
             }
-        } 
+        }
         #endregion
 
         public async Task<IActionResult> ArchivedTickets()
@@ -98,21 +98,17 @@ namespace BugTracker.Controllers
                 return NotFound();
             }
 
-            var ticket = await _context.Tickets
-                .Include(t => t.DeveloperUser)
-                .Include(t => t.OwnerUser)
-                .Include(t => t.Project)
-                .Include(t => t.TicketPriority)
-                .Include(t => t.TicketStatus)
-                .Include(t => t.TicketType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+
+
+            Ticket ticket = await _ticketService.GetTicketByIdAsync(id.Value);
+
             if (ticket == null)
             {
                 return NotFound();
             }
 
             return View(ticket);
-        } 
+        }
         #endregion
 
         #region CREATE
@@ -246,6 +242,30 @@ namespace BugTracker.Controllers
         }
         #endregion
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddTicketComment([Bind("Id,TicketId,Comment")] TicketComment ticketComment)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    ticketComment.UserId = _userManager.GetUserId(User);
+                    ticketComment.Created = DateTimeOffset.Now;
+
+                    await _ticketService.AddTicketCommentAsync(ticketComment);
+                   
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+
+            return RedirectToAction("Details", new { id = ticketComment.TicketId });
+        }
+
         #region ARCHIVE
         // GET: Tickets/Archive/5
         public async Task<IActionResult> Archive(int? id)
@@ -314,7 +334,7 @@ namespace BugTracker.Controllers
             await _ticketService.RestoreTicketAsync(ticket);
 
             return RedirectToAction(nameof(Index));
-        }  
+        }
         #endregion
         #endregion
 
@@ -324,7 +344,7 @@ namespace BugTracker.Controllers
             int companyId = User.Identity.GetCompanyId().Value;
 
             return (await _ticketService.GetAllTicketsByCompanyAsync(companyId)).Any(t => t.Id == id);
-        } 
+        }
         #endregion
     }
 }

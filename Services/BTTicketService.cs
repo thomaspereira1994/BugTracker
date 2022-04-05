@@ -48,6 +48,22 @@ namespace BugTracker.Services
                 throw;
             }
         }
+
+        #region ADD TICKET COMMENT
+        public async Task AddTicketCommentAsync(TicketComment ticketComment)
+        {
+            try
+            {
+                await _context.AddAsync(ticketComment);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        } 
+        #endregion
         //CRUD - READ
         public async Task<Ticket> GetTicketByIdAsync(int ticketId)
         {
@@ -59,6 +75,9 @@ namespace BugTracker.Services
                                              .Include(t => t.TicketPriority)
                                              .Include(t => t.TicketStatus)
                                              .Include(t => t.TicketType)
+                                             .Include(t => t.Comments)
+                                             .Include(t => t.Attachments)
+                                             .Include(t => t.History)
                                              .FirstOrDefaultAsync(t => t.Id == ticketId);
             }
             catch (Exception)

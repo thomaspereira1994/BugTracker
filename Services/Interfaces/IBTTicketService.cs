@@ -24,6 +24,8 @@ namespace BugTracker.Services.Interfaces
         Task RestoreTicketAsync(Ticket ticket);
         #endregion
 
+        Task AddTicketCommentAsync(TicketComment ticketComment);
+
         Task AssignTicketAsync(int ticketId, string userId);
         Task<List<Ticket>> GetArchivedTicketsAsync(int companyId);
         Task<List<Ticket>> GetAllTicketsByCompanyAsync(int companyId);

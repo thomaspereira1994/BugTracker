@@ -13,7 +13,7 @@ namespace BugTracker.Models
 
 
         [DisplayName("Date")]
-        public DateTime Created { get; set; }
+        public DateTimeOffset Created { get; set; }
 
 
         //Foreign Key
@@ -22,7 +22,7 @@ namespace BugTracker.Models
 
         //Foreign Key
         [DisplayName("Team Member")]
-        public int UserId { get; set; }
+        public string UserId { get; set; }
 
 
         //Navigation properties

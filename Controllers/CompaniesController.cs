@@ -9,19 +9,27 @@ namespace BugTracker.Controllers
 {
     public class CompaniesController : Controller
     {
+        #region PRIVATE VARIABLES
         private readonly ApplicationDbContext _context;
 
+        #endregion
+
+        #region CONSTRUCTOR
         public CompaniesController(ApplicationDbContext context)
         {
             _context = context;
         }
+        #endregion
 
+        #region INDEX
         // GET: Companies
         public async Task<IActionResult> Index()
         {
             return View(await _context.Companies.ToListAsync());
         }
+        #endregion
 
+        #region DETAILS
         // GET: Companies/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -39,13 +47,18 @@ namespace BugTracker.Controllers
 
             return View(company);
         }
+        #endregion
 
+        #region CREATE
+        #region GET
         // GET: Companies/Create
         public IActionResult Create()
         {
             return View();
         }
+        #endregion
 
+        #region POST
         // POST: Companies/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -61,7 +74,11 @@ namespace BugTracker.Controllers
             }
             return View(company);
         }
+        #endregion
+        #endregion
 
+        #region EDIT
+        #region GET
         // GET: Companies/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -77,7 +94,9 @@ namespace BugTracker.Controllers
             }
             return View(company);
         }
+        #endregion
 
+        #region POST
         // POST: Companies/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -112,7 +131,11 @@ namespace BugTracker.Controllers
             }
             return View(company);
         }
+        #endregion
+        #endregion
 
+        #region DELETE
+        #region GET
         // GET: Companies/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -130,7 +153,9 @@ namespace BugTracker.Controllers
 
             return View(company);
         }
+        #endregion
 
+        #region POST
         // POST: Companies/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -141,10 +166,14 @@ namespace BugTracker.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        #endregion
+        #endregion
 
+        #region COMPANY EXISTS
         private bool CompanyExists(int id)
         {
             return _context.Companies.Any(e => e.Id == id);
-        }
+        } 
+        #endregion
     }
 }

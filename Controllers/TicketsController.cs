@@ -1,4 +1,5 @@
-﻿using System;
+﻿#region USING STATEMENTS
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,6 +13,9 @@ using BugTracker.Services.Interfaces;
 using BugTracker.Models.Enums;
 using BugTracker.Extensions;
 using System.IO;
+using Microsoft.AspNetCore.Authorization;
+using BugTracker.Models.ViewModels; 
+#endregion
 
 namespace BugTracker.Controllers
 {
@@ -83,6 +87,7 @@ namespace BugTracker.Controllers
         }
         #endregion
 
+        #region ARCHIVED TICKETS
         public async Task<IActionResult> ArchivedTickets()
         {
             int companyId = User.Identity.GetCompanyId().Value;
@@ -91,6 +96,70 @@ namespace BugTracker.Controllers
 
             return View(tickets);
         }
+        #endregion
+
+        #region UNASSIGNED TICKETS
+        [Authorize(Roles = "Admin,ProjectManager")]
+        public async Task<IActionResult> UnassignedTickets()
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            string btUserId = _userManager.GetUserId(User);
+
+            List<Ticket> tickets = await _ticketService.GetUnassignedTicketsAsync(companyId);
+
+            if (User.IsInRole(nameof(Roles.Admin)))
+            {
+                return View(tickets);
+            }
+            else
+            {
+                List<Ticket> pmTickets = new();
+                foreach (Ticket ticket in tickets)
+                {
+                    if (await _projectService.IsAssignedProjectManagerAsync(btUserId, ticket.ProjectId))
+                    {
+                        pmTickets.Add(ticket);
+                    }
+                }
+
+                return View(pmTickets);
+            }
+        }
+
+        #endregion
+
+        #region ASSIGN DEVELOPER
+        #region GET
+        [HttpGet]
+        public async Task<IActionResult> AssignDeveloper(int id)
+        {
+            AssignDeveloperViewModel model = new();
+
+            model.Ticket = await _ticketService.GetTicketByIdAsync(id);
+            //MAY HAVE TO BE model.Ticket.ProjectId instead
+            model.Developers = new SelectList(await _projectService.GetProjectMembersByRoleAsync(model.Ticket.ProjectId,
+                                                                                                 nameof(Roles.Developer)),
+                                                                                                 "Id", "FullName");
+
+            return View(model);
+        }
+        #endregion
+        #region POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignDeveloper(AssignDeveloperViewModel model)
+        {
+            if(model.DeveloperId != null)
+            {
+                await _ticketService.AssignTicketAsync(model.Ticket.Id, model.DeveloperId);
+                return RedirectToAction(nameof(Details), new {id = model.Ticket.Id});
+            }
+
+            return RedirectToAction(nameof(AssignDeveloper), new {id = model.Ticket.Id });
+        }
+        #endregion
+        #endregion
 
         #region DETAILS
         // GET: Tickets/Details/5
@@ -278,7 +347,7 @@ namespace BugTracker.Controllers
         {
             string statusMessage;
 
-            if(ModelState.IsValid && ticketAttachment.FormFile != null)
+            if (ModelState.IsValid && ticketAttachment.FormFile != null)
             {
                 ticketAttachment.FileData = await _fileService.ConvertFileToByArrayAsync(ticketAttachment.FormFile);
                 ticketAttachment.FileName = ticketAttachment.FormFile.FileName;

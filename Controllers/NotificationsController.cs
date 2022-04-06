@@ -12,20 +12,29 @@ namespace BugTracker.Controllers
 {
     public class NotificationsController : Controller
     {
+        #region PRIVATE VARIABLES
         private readonly ApplicationDbContext _context;
 
+        #endregion
+
+        #region CONSTRUCTOR
         public NotificationsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
+        #endregion
+        
+        #region INDEX
         // GET: Notifications
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Notifications.Include(n => n.Recipient).Include(n => n.Sender).Include(n => n.Ticket);
             return View(await applicationDbContext.ToListAsync());
         }
+        #endregion
 
+        #region DETAILS
         // GET: Notifications/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -46,7 +55,10 @@ namespace BugTracker.Controllers
 
             return View(notification);
         }
+        #endregion
 
+        #region CREATE
+        #region GET
         // GET: Notifications/Create
         public IActionResult Create()
         {
@@ -55,7 +67,9 @@ namespace BugTracker.Controllers
             ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description");
             return View();
         }
+        #endregion
 
+        #region POST
         // POST: Notifications/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -74,7 +88,11 @@ namespace BugTracker.Controllers
             ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description", notification.TicketId);
             return View(notification);
         }
+        #endregion
+        #endregion
 
+        #region EDIT
+        #region GET
         // GET: Notifications/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -93,7 +111,9 @@ namespace BugTracker.Controllers
             ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description", notification.TicketId);
             return View(notification);
         }
+        #endregion
 
+        #region POST
         // POST: Notifications/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -131,7 +151,11 @@ namespace BugTracker.Controllers
             ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description", notification.TicketId);
             return View(notification);
         }
+        #endregion
+        #endregion
 
+        #region DELETE
+        #region GET
         // GET: Notifications/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -152,7 +176,9 @@ namespace BugTracker.Controllers
 
             return View(notification);
         }
+        #endregion
 
+        #region POST
         // POST: Notifications/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -163,10 +189,14 @@ namespace BugTracker.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        #endregion
+        #endregion
 
+        #region NOTIFICATION EXISTS
         private bool NotificationExists(int id)
         {
             return _context.Notifications.Any(e => e.Id == id);
-        }
+        } 
+        #endregion
     }
 }

@@ -12,20 +12,28 @@ namespace BugTracker.Controllers
 {
     public class InvitesController : Controller
     {
+        #region PRIVATE VARIABLES
         private readonly ApplicationDbContext _context;
 
-        public InvitesController(ApplicationDbContext context)
+        #endregion
+
+        #region CONSTRUCTOR
+        public InvitesController(ApplicationDbContext context) 
         {
             _context = context;
         }
+        #endregion
 
+        #region INDEX
         // GET: Invites
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Invites.Include(i => i.Company).Include(i => i.Invitee).Include(i => i.Invitor).Include(i => i.Project);
             return View(await applicationDbContext.ToListAsync());
         }
+        #endregion
 
+        #region DETAILS
         // GET: Invites/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -47,7 +55,10 @@ namespace BugTracker.Controllers
 
             return View(invite);
         }
+        #endregion
 
+        #region CREATE
+        #region GET
         // GET: Invites/Create
         public IActionResult Create()
         {
@@ -57,7 +68,9 @@ namespace BugTracker.Controllers
             ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name");
             return View();
         }
+        #endregion
 
+        #region POST
         // POST: Invites/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -77,7 +90,11 @@ namespace BugTracker.Controllers
             ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", invite.ProjectId);
             return View(invite);
         }
+        #endregion
+        #endregion
 
+        #region EDIT
+        #region GET
         // GET: Invites/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -97,7 +114,9 @@ namespace BugTracker.Controllers
             ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", invite.ProjectId);
             return View(invite);
         }
+        #endregion
 
+        #region POST
         // POST: Invites/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -136,7 +155,11 @@ namespace BugTracker.Controllers
             ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", invite.ProjectId);
             return View(invite);
         }
+        #endregion
+        #endregion
 
+        #region DELETE
+        #region GET
         // GET: Invites/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -158,7 +181,9 @@ namespace BugTracker.Controllers
 
             return View(invite);
         }
+        #endregion
 
+        #region POST
         // POST: Invites/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -169,10 +194,14 @@ namespace BugTracker.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        #endregion
+        #endregion
 
+        #region INVITE EXISTS
         private bool InviteExists(int id)
         {
             return _context.Invites.Any(e => e.Id == id);
-        }
+        } 
+        #endregion
     }
 }

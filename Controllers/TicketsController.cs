@@ -14,7 +14,7 @@ using BugTracker.Models.Enums;
 using BugTracker.Extensions;
 using System.IO;
 using Microsoft.AspNetCore.Authorization;
-using BugTracker.Models.ViewModels; 
+using BugTracker.Models.ViewModels;
 #endregion
 
 namespace BugTracker.Controllers
@@ -152,7 +152,7 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignDeveloper(AssignDeveloperViewModel model)
         {
-            if(model.DeveloperId != null)
+            if (model.DeveloperId != null)
             {
                 BTUser btUser = await _userManager.GetUserAsync(User);
                 //OLD TICKET
@@ -172,10 +172,10 @@ namespace BugTracker.Controllers
                 Ticket newTicket = await _ticketService.GetTicketAsNoTracking(model.Ticket.Id);
                 await _historyService.AddHistoryAsync(oldTicket, newTicket, btUser.Id);
 
-                return RedirectToAction(nameof(Details), new {id = model.Ticket.Id});
+                return RedirectToAction(nameof(Details), new { id = model.Ticket.Id });
             }
 
-            return RedirectToAction(nameof(AssignDeveloper), new {id = model.Ticket.Id });
+            return RedirectToAction(nameof(AssignDeveloper), new { id = model.Ticket.Id });
         }
         #endregion
         #endregion
@@ -278,7 +278,7 @@ namespace BugTracker.Controllers
             ViewData["TicketTypeId"] = new SelectList(await _lookUpService.GetTicketTypesAsync(), "Id", "Name");
 
             return View(ticket);
-        } 
+        }
         #endregion
         #endregion
 
@@ -355,7 +355,7 @@ namespace BugTracker.Controllers
             ViewData["TicketTypeId"] = new SelectList(await _lookUpService.GetTicketTypesAsync(), "Id", "Name", ticket.TicketTypeId);
 
             return View(ticket);
-        } 
+        }
         #endregion
         #endregion
 
@@ -372,6 +372,9 @@ namespace BugTracker.Controllers
                     ticketComment.Created = DateTimeOffset.Now;
 
                     await _ticketService.AddTicketCommentAsync(ticketComment);
+
+                    //ADD HISTORY
+                    await _historyService.AddHistoryAsync(ticketComment.TicketId, nameof(TicketComment), ticketComment.UserId);
 
                 }
                 catch (Exception)
@@ -394,14 +397,25 @@ namespace BugTracker.Controllers
 
             if (ModelState.IsValid && ticketAttachment.FormFile != null)
             {
-                ticketAttachment.FileData = await _fileService.ConvertFileToByArrayAsync(ticketAttachment.FormFile);
-                ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
-                ticketAttachment.FileContentType = ticketAttachment.FormFile.ContentType;
+                try
+                {
+                    ticketAttachment.FileData = await _fileService.ConvertFileToByArrayAsync(ticketAttachment.FormFile);
+                    ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
+                    ticketAttachment.FileContentType = ticketAttachment.FormFile.ContentType;
 
-                ticketAttachment.Created = DateTimeOffset.Now;
-                ticketAttachment.UserId = _userManager.GetUserId(User);
+                    ticketAttachment.Created = DateTimeOffset.Now;
+                    ticketAttachment.UserId = _userManager.GetUserId(User);
 
-                await _ticketService.AddTicketAttachmentAsync(ticketAttachment);
+                    await _ticketService.AddTicketAttachmentAsync(ticketAttachment);
+
+                    //ADD HISTORY
+                    await _historyService.AddHistoryAsync(ticketAttachment.TicketId, nameof(TicketAttachment), ticketAttachment.UserId);
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
 
                 statusMessage = "Success: New attachment added to Ticket.";
             }

@@ -233,10 +233,13 @@
                                         {
                                             <p>A new ticket was added.</p>
                                         }
-                                        else if (history.Property.Equals("TicketComment") || history.Property.Equals("TicketAttachment"))
+                                        else if (history.Property.Equals("TicketComment"))
                                         {
-                                            <p>A <b>@history.Property</b> was added</p>
-
+                                            <p>A new <b>COMMENT</b> was added</p>
+                                        }
+                                        else if (history.Property.Equals("TicketAttachment"))
+                                        {
+                                            <p>An <b>ATTACHMENT</b> was added</p>
                                         }
                                         else
                                         {

@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace BugTracker.Controllers
 {
-    public class  ProjectsController : Controller
+    public class ProjectsController : Controller
     {
         #region INJECTION VARIABLES
         private readonly ApplicationDbContext _context;
@@ -28,10 +28,10 @@ namespace BugTracker.Controllers
         #endregion
 
         #region CONSTRUCTOR
-        public ProjectsController(ApplicationDbContext context, 
-                                  IBTRolesService rolesService, 
-                                  IBTLookUpService lookUpService, 
-                                  IBTFileService fileService, 
+        public ProjectsController(ApplicationDbContext context,
+                                  IBTRolesService rolesService,
+                                  IBTLookUpService lookUpService,
+                                  IBTFileService fileService,
                                   IBTProjectService projectService,
                                   UserManager<BTUser> userManager,
                                   IBTCompanyInfoService companyInfoService)
@@ -46,14 +46,16 @@ namespace BugTracker.Controllers
         }
         #endregion
 
-        #region PROJECT VIEWS
+        #region INDEX
         // GET: Projects
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Projects.Include(p => p.Company).Include(p => p.ProjectPriority);
             return View(await applicationDbContext.ToListAsync());
         }
+        #endregion
 
+        #region MY PROJECTS
         public async Task<IActionResult> MyProjects()
         {
             string userId = _userManager.GetUserId(User);
@@ -62,14 +64,16 @@ namespace BugTracker.Controllers
 
             return View(projects);
         }
+        #endregion
 
+        #region ALL PROJECTS
         public async Task<IActionResult> AllProjects()
         {
             List<Project> projects = new();
 
             int companyId = User.Identity.GetCompanyId().Value;
 
-            if(User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
+            if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
             {
                 projects = await _companyInfoService.GetAllProjectsAsync(companyId);
             }
@@ -80,7 +84,9 @@ namespace BugTracker.Controllers
 
             return View(projects);
         }
+        #endregion
 
+        #region ARCHIVED PROJECTS
         public async Task<IActionResult> ArchivedProjects()
         {
             int companyId = User.Identity.GetCompanyId().Value;
@@ -89,6 +95,106 @@ namespace BugTracker.Controllers
 
             return View(projects);
         }
+        #endregion
+
+        #region UNASSIGNED PROJECTS
+        public async Task<IActionResult> UnassignedProjects()
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            List<Project> projects = new();
+
+            projects = await _projectService.GetUnassignedProjectsAsync(companyId);
+
+            return View(projects);
+        }
+        #endregion
+
+        #region ASSIGN PROJECT MANAGER
+        #region GET
+        [HttpGet]
+        public async Task<IActionResult> AssignPM(int projectId)
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            AssignPMViewModel model = new();
+
+            model.Project = await _projectService.GetProjectByIdAsync(projectId, companyId);
+            model.PMList = new SelectList(await _rolesService.GetUsersInRoleAsync(nameof(Roles.ProjectManager), companyId), "Id", "FullName");
+
+            return View(model);
+        }
+        #endregion
+
+        #region POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignPM(AssignPMViewModel model)
+        {
+            if (!string.IsNullOrEmpty(model.PMID))
+            {
+                await _projectService.AddProjectManagerAsync(model.PMID, model.Project.Id);
+
+                return RedirectToAction(nameof(Details), new { id = model.Project.Id });
+            }
+
+            return RedirectToAction(nameof(AssignPM), new { projectId = model.Project.Id });
+        }
+        #endregion
+        #endregion
+
+        #region ASSIGN MEMBERS
+        #region GET
+        [HttpGet]
+        public async Task<IActionResult> AssignMembers(int id)
+        {
+            ProjectMembersViewModel model = new();
+
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            model.Project = await _projectService.GetProjectByIdAsync(id, companyId);
+
+            List<BTUser> developers = await _rolesService.GetUsersInRoleAsync(nameof(Roles.Developer), companyId);
+            List<BTUser> submitters = await _rolesService.GetUsersInRoleAsync(nameof(Roles.Submitter), companyId);
+
+            List<BTUser> companyMembers = developers.Concat(submitters).ToList();
+
+            List<string> projectMembers = model.Project.Members.Select(m => m.Id).ToList();
+
+            model.Users = new MultiSelectList(companyMembers, "Id", "FullName", projectMembers);
+
+            return View(model);
+
+        }
+        #endregion
+        #region POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignMembers(ProjectMembersViewModel model)
+        {
+            if(model.SelectedUsers != null)
+            {
+                List<string> memberIds = (await _projectService.GetAllProjectMembersExceptPMAsync(model.Project.Id)).Select(m => m.Id).ToList();
+
+                //REMOVE CURRENT MEMBERS - DO THIS TO AVOID DUPLICATES IN THE LIST
+                foreach (string member in memberIds)
+                {
+                    await _projectService.RemoveUserFromProjectAsync(member, model.Project.Id);
+                }
+
+                //ADD SELECTED MEMBERS
+                foreach (string  member in model.SelectedUsers)
+                {
+                    await _projectService.AddUserToProjectAsync(member, model.Project.Id);
+                }
+
+                //GO TO PROJECT DETAILS
+                return RedirectToAction(nameof(Details), new { id = model.Project.Id });
+            }
+
+            return RedirectToAction(nameof(AssignMembers), new { id = model.Project.Id });
+        }
+        #endregion
         #endregion
 
         #region DETAILS
@@ -103,7 +209,7 @@ namespace BugTracker.Controllers
             int companyId = User.Identity.GetCompanyId().Value;
 
             Project project = await _projectService.GetProjectByIdAsync(id.Value, companyId);
-           
+
             if (project == null)
             {
                 return NotFound();
@@ -130,7 +236,7 @@ namespace BugTracker.Controllers
 
 
             return View(model);
-        } 
+        }
         #endregion
 
         #region POST
@@ -268,7 +374,7 @@ namespace BugTracker.Controllers
             var project = await _projectService.GetProjectByIdAsync(id, companyId);
 
             await _projectService.ArchiveProjectAsync(project);
-            
+
             return RedirectToAction(nameof(Index));
         }
         #endregion

@@ -28,10 +28,11 @@ namespace BugTracker.Controllers
         private readonly IBTLookUpService _lookUpService;
         private readonly IBTTicketService _ticketService;
         private readonly IBTFileService _fileService;
+        private readonly IBTTicketHistoryService _historyService;
         #endregion
 
         #region CONSTRUCTOR
-        public TicketsController(ApplicationDbContext context, UserManager<BTUser> userManager, IBTProjectService projectService, IBTLookUpService lookUpService, IBTTicketService ticketService, IBTFileService fileService)
+        public TicketsController(ApplicationDbContext context, UserManager<BTUser> userManager, IBTProjectService projectService, IBTLookUpService lookUpService, IBTTicketService ticketService, IBTFileService fileService, IBTTicketHistoryService historyService)
         {
             _context = context;
             _userManager = userManager;
@@ -39,6 +40,7 @@ namespace BugTracker.Controllers
             _lookUpService = lookUpService;
             _ticketService = ticketService;
             _fileService = fileService;
+            _historyService = historyService;
         }
 
         #endregion
@@ -152,7 +154,24 @@ namespace BugTracker.Controllers
         {
             if(model.DeveloperId != null)
             {
-                await _ticketService.AssignTicketAsync(model.Ticket.Id, model.DeveloperId);
+                BTUser btUser = await _userManager.GetUserAsync(User);
+                //OLD TICKET
+                Ticket oldTicket = await _ticketService.GetTicketAsNoTracking(model.Ticket.Id);
+                try
+                {
+                    await _ticketService.AssignTicketAsync(model.Ticket.Id, model.DeveloperId);
+
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+
+                //NEW TICKET
+                Ticket newTicket = await _ticketService.GetTicketAsNoTracking(model.Ticket.Id);
+                await _historyService.AddHistoryAsync(oldTicket, newTicket, btUser.Id);
+
                 return RedirectToAction(nameof(Details), new {id = model.Ticket.Id});
             }
 
@@ -184,6 +203,7 @@ namespace BugTracker.Controllers
         #endregion
 
         #region CREATE
+        #region GET
         // GET: Tickets/Create
         public async Task<IActionResult> Create()
         {
@@ -205,7 +225,9 @@ namespace BugTracker.Controllers
             ViewData["TicketTypeId"] = new SelectList(await _lookUpService.GetTicketTypesAsync(), "Id", "Name");
             return View();
         }
+        #endregion
 
+        #region POST
         // POST: Tickets/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -218,17 +240,28 @@ namespace BugTracker.Controllers
             if (ModelState.IsValid)
             {
 
-                ticket.Created = DateTimeOffset.Now;
-                ticket.OwnerUserId = btUser.Id;
+                try
+                {
+                    ticket.Created = DateTimeOffset.Now;
+                    ticket.OwnerUserId = btUser.Id;
 
-                ticket.TicketStatusId = (await _ticketService.LookupTicketStatusIdAsync(nameof(BTTicketStatus.New))).Value;
+                    ticket.TicketStatusId = (await _ticketService.LookupTicketStatusIdAsync(nameof(BTTicketStatus.New))).Value;
 
-                await _ticketService.AddNewTicketAsync(ticket);
+                    await _ticketService.AddNewTicketAsync(ticket);
 
-                //TO DO: TICKET HISTORY
-                //TO DO: TICKET NOTIFICATION
+                    //TO DO: TICKET HISTORY
+                    Ticket newTicket = await _ticketService.GetTicketAsNoTracking(ticket.Id);
+                    await _historyService.AddHistoryAsync(null, newTicket, btUser.Id);
 
-                return RedirectToAction(nameof(Index));
+                    //TO DO: TICKET NOTIFICATION
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+
+                return RedirectToAction(nameof(AllTickets));
             }
 
             if (User.IsInRole(nameof(Roles.Admin)))
@@ -245,10 +278,12 @@ namespace BugTracker.Controllers
             ViewData["TicketTypeId"] = new SelectList(await _lookUpService.GetTicketTypesAsync(), "Id", "Name");
 
             return View(ticket);
-        }
+        } 
+        #endregion
         #endregion
 
         #region EDIT
+        #region GET
         // GET: Tickets/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -270,7 +305,9 @@ namespace BugTracker.Controllers
 
             return View(ticket);
         }
+        #endregion
 
+        #region POST
         // POST: Tickets/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -286,6 +323,9 @@ namespace BugTracker.Controllers
             if (ModelState.IsValid)
             {
                 BTUser btUser = await _userManager.GetUserAsync(User);
+
+                Ticket oldTicket = await _ticketService.GetTicketAsNoTracking(ticket.Id);
+
                 try
                 {
                     ticket.Updated = DateTimeOffset.Now;
@@ -302,7 +342,11 @@ namespace BugTracker.Controllers
                         throw;
                     }
                 }
+
                 //TO DO: ADD TICKET HISTORY
+                Ticket newTicket = await _ticketService.GetTicketAsNoTracking(ticket.Id);
+                await _historyService.AddHistoryAsync(oldTicket, newTicket, btUser.Id);
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -311,7 +355,8 @@ namespace BugTracker.Controllers
             ViewData["TicketTypeId"] = new SelectList(await _lookUpService.GetTicketTypesAsync(), "Id", "Name", ticket.TicketTypeId);
 
             return View(ticket);
-        }
+        } 
+        #endregion
         #endregion
 
         #region ADD TICKET COMMENT

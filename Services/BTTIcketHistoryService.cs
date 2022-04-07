@@ -13,11 +13,15 @@ namespace BugTracker.Services
     {
         ApplicationDbContext _context;
 
+        #region CONSTRUCTOR
         public BTTIcketHistoryService(ApplicationDbContext context)
         {
             _context = context;
         }
 
+        #endregion
+
+        #region ADD TICKET HISTORY
         public async Task AddHistoryAsync(Ticket oldTicket, Ticket newTicket, string userId)
         {
             //NEW TICKET ADDED SCENARIO
@@ -84,7 +88,7 @@ namespace BugTracker.Services
                     TicketHistory ticketHistory = new()
                     {
                         TicketId = newTicket.Id,
-                        Property = "TicketPriority",
+                        Property = "Priority",
                         OldValue = oldTicket.TicketPriority.Name,
                         NewValue = newTicket.TicketPriority.Name,
                         Created = DateTimeOffset.Now,
@@ -100,7 +104,7 @@ namespace BugTracker.Services
                     TicketHistory ticketHistory = new()
                     {
                         TicketId = newTicket.Id,
-                        Property = "TicketStatus",
+                        Property = "Status",
                         OldValue = oldTicket.TicketStatus.Name,
                         NewValue = newTicket.TicketStatus.Name,
                         Created = DateTimeOffset.Now,
@@ -116,7 +120,7 @@ namespace BugTracker.Services
                     TicketHistory ticketHistory = new()
                     {
                         TicketId = newTicket.Id,
-                        Property = "TicketTypeId",
+                        Property = "Type",
                         OldValue = oldTicket.TicketType.Name,
                         NewValue = newTicket.TicketType.Name,
                         Created = DateTimeOffset.Now,
@@ -132,7 +136,7 @@ namespace BugTracker.Services
                     TicketHistory ticketHistory = new()
                     {
                         TicketId = newTicket.Id,
-                        Property = "TicketDeveloper",
+                        Property = "Developer",
                         OldValue = oldTicket.DeveloperUser?.FullName ?? "Not Assigned",
                         NewValue = newTicket.DeveloperUser?.FullName,
                         Created = DateTimeOffset.Now,
@@ -145,7 +149,7 @@ namespace BugTracker.Services
                 //SAVE CHANGES TO DATABASE
                 try
                 {
-                    
+
                     await _context.SaveChangesAsync();
                 }
                 catch (Exception)
@@ -156,6 +160,38 @@ namespace BugTracker.Services
             }
         }
 
+        public async Task AddHistoryAsync(int ticketId, string model, string userId)
+        {
+            try
+            {
+                Ticket ticket = await _context.Tickets.FindAsync(ticketId);
+
+                string description = model.ToLower().Replace("Ticket", "");
+
+                description = $"New {description} added to ticket: {ticket.Title}";
+
+                TicketHistory history = new()
+                {
+                    TicketId = ticket.Id,
+                    Property = model,
+                    OldValue = "",
+                    Created = DateTimeOffset.Now,
+                    UserId = userId,
+                    Description = description
+                };
+
+                await _context.TicketHistories.AddAsync(history);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        #endregion
+
+        #region GET COMPANY TICKETS HISTORIES
         public async Task<List<TicketHistory>> GetCompanyTicketsHistoriesAsync(int companyId)
         {
             try
@@ -171,7 +207,7 @@ namespace BugTracker.Services
 
                 List<TicketHistory> ticketHistoriesList = ticketsList.SelectMany(t => t.History).ToList();
 
-                return ticketHistoriesList;                                    
+                return ticketHistoriesList;
             }
             catch (Exception)
             {
@@ -180,6 +216,9 @@ namespace BugTracker.Services
             }
         }
 
+        #endregion
+
+        #region GET PROJECT TICKETS HISTORIES
         public async Task<List<TicketHistory>> GetProjectTicketsHistoriesAsync(int projectId, int companyId)
         {
             try
@@ -198,5 +237,7 @@ namespace BugTracker.Services
                 throw;
             }
         }
+
+        #endregion    
     }
 }

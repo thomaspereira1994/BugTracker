@@ -49,6 +49,7 @@ namespace BugTracker.Services.Interfaces
         Task AddTicketAttachmentAsync(TicketAttachment ticketAttachment);
 
         #endregion
+
         #region ASSIGN TICKET
         Task AssignTicketAsync(int ticketId, string userId);
 
@@ -90,6 +91,10 @@ namespace BugTracker.Services.Interfaces
         #region GET TICKETS BY USER ID
         Task<List<Ticket>> GetTicketsByUserIdAsync(string userId, int companyId);
 
+        #endregion
+
+        #region GET TICKET AS NO TRACKING
+        public Task<Ticket> GetTicketAsNoTracking(int ticketId);
         #endregion
 
         #region GET PROJECT TICKETS BY ROLE

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#region USING STATEMENTS
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,7 +12,8 @@ using BugTracker.Extensions;
 using BugTracker.Models.ViewModels;
 using BugTracker.Services.Interfaces;
 using BugTracker.Models.Enums;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity; 
+#endregion
 
 namespace BugTracker.Controllers
 {

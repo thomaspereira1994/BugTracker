@@ -30,11 +30,11 @@
             <img class="media-object" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="" style="width:30px; height:30px;" />
         }
     </a>
-   
-        <span class="text-muted" style="font-size:x-small;">
-           Developer: <strong>@Model.DeveloperUser.FullName</strong>           
-        </span>
-    
+
+    <span class="text-muted" style="font-size:x-small;">
+        Developer: <strong>@Model.DeveloperUser.FullName</strong>
+    </span>
+
 }
 
 
@@ -170,7 +170,7 @@
                                             <div class="media-body ml-3">
                                                 <label>
                                                     Description
-                                                    <input asp-for="@Model.Attachments.FirstOrDefault().Description" type="text" class="form-control" />
+                                                    <input asp-for="@Model.Attachments.FirstOrDefault().Description" type="text" class="form-control" value="" />
                                                 </label><br />
                                                 <label class="btn btn-outline-primary btn-sm">
                                                     <input asp-for="@Model.Attachments.FirstOrDefault().FormFile" type="file" class="form-control-file" />
@@ -224,16 +224,30 @@
                             @foreach (TicketHistory history in Model.History)
                             {
                                 <div class="">
-                                    <span class="date">@history.Created.ToString("dd MMM yyyy")</span>
+                                    <span class="date" style="font-weight:bold">@history.Created.ToString("dd MMM yyyy")</span>
                                     <h6>@history.Description</h6>
                                     <span>By: <a href="" title="@history.User.FullName">@history.User.FullName</a></span>
 
                                     <div class="">
-                                        <p>The ticket <b>@history.Property</b> was edited</p>
-                                        <p>@($"Previous {history.Property}: {history.OldValue}")</p>
-                                        <p>@($"Current {history.Property}: {history.NewValue}")</p>
+                                        @if (history.Description.Contains("New Ticket Created"))
+                                        {
+                                            <p>A new ticket was added.</p>
+                                        }
+                                        else if (history.Property.Equals("TicketComment") || history.Property.Equals("TicketAttachment"))
+                                        {
+                                            <p>A <b>@history.Property</b> was added</p>
+
+                                        }
+                                        else
+                                        {
+                                            <p>The ticket <b>@history.Property</b> was edited</p>
+                                            <p>@($"Previous {history.Property}:") <span style="color:red">@history.OldValue</span></p>
+                                            <p>@($"Current {history.Property}: ") <span style="color:green">@history.NewValue</span></p>
+                                        }
+
                                     </div>
                                 </div>
+                                <hr />
                             }
                         </div>
                     </div>

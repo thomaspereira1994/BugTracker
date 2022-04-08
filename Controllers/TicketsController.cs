@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using BugTracker.Data;
 using BugTracker.Models;
 using Microsoft.AspNetCore.Identity;
 using BugTracker.Services.Interfaces;
@@ -19,10 +18,10 @@ using BugTracker.Models.ViewModels;
 
 namespace BugTracker.Controllers
 {
+    [Authorize]
     public class TicketsController : Controller
     {
         #region PRIVATE PROPERTIES
-        private readonly ApplicationDbContext _context;
         private readonly UserManager<BTUser> _userManager;
         private readonly IBTProjectService _projectService;
         private readonly IBTLookUpService _lookUpService;
@@ -32,9 +31,13 @@ namespace BugTracker.Controllers
         #endregion
 
         #region CONSTRUCTOR
-        public TicketsController(ApplicationDbContext context, UserManager<BTUser> userManager, IBTProjectService projectService, IBTLookUpService lookUpService, IBTTicketService ticketService, IBTFileService fileService, IBTTicketHistoryService historyService)
+        public TicketsController(UserManager<BTUser> userManager, 
+                                 IBTProjectService projectService, 
+                                 IBTLookUpService lookUpService, 
+                                 IBTTicketService ticketService, 
+                                 IBTFileService fileService, 
+                                 IBTTicketHistoryService historyService)
         {
-            _context = context;
             _userManager = userManager;
             _projectService = projectService;
             _lookUpService = lookUpService;
@@ -43,21 +46,6 @@ namespace BugTracker.Controllers
             _historyService = historyService;
         }
 
-        #endregion
-
-        #region INDEX
-        // GET: Tickets
-        public async Task<IActionResult> Index()
-        {
-            var applicationDbContext = _context.Tickets.Include(t => t.DeveloperUser)
-                                                       .Include(t => t.OwnerUser)
-                                                       .Include(t => t.Project)
-                                                       .Include(t => t.TicketPriority)
-                                                       .Include(t => t.TicketStatus)
-                                                       .Include(t => t.TicketType);
-
-            return View(await applicationDbContext.ToListAsync());
-        }
         #endregion
 
         #region MY TICKETS
@@ -101,7 +89,7 @@ namespace BugTracker.Controllers
         #endregion
 
         #region UNASSIGNED TICKETS
-        [Authorize(Roles = "Admin,ProjectManager")]
+        [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> UnassignedTickets()
         {
             int companyId = User.Identity.GetCompanyId().Value;
@@ -133,6 +121,7 @@ namespace BugTracker.Controllers
 
         #region ASSIGN DEVELOPER
         #region GET
+        [Authorize(Roles = "Admin, ProjectManager")]
         [HttpGet]
         public async Task<IActionResult> AssignDeveloper(int id)
         {
@@ -148,6 +137,7 @@ namespace BugTracker.Controllers
         }
         #endregion
         #region POST
+        [Authorize(Roles = "Admin, ProjectManager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignDeveloper(AssignDeveloperViewModel model)
@@ -347,7 +337,7 @@ namespace BugTracker.Controllers
                 Ticket newTicket = await _ticketService.GetTicketAsNoTracking(ticket.Id);
                 await _historyService.AddHistoryAsync(oldTicket, newTicket, btUser.Id);
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new { id = ticket.Id });
             }
 
             ViewData["TicketPriorityId"] = new SelectList(await _lookUpService.GetTicketPrioritiesAsync(), "Id", "Name", ticket.TicketPriorityId);
@@ -429,7 +419,9 @@ namespace BugTracker.Controllers
         #endregion
 
         #region ARCHIVE
+        #region GET
         // GET: Tickets/Archive/5
+        [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> Archive(int? id)
         {
             if (id == null)
@@ -448,8 +440,11 @@ namespace BugTracker.Controllers
 
             return View(ticket);
         }
+        #endregion
 
+        #region POST
         // POST: Tickets/Delete/5
+        [Authorize(Roles = "Admin, ProjectManager")]
         [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ArchiveConfirmed(int id)
@@ -461,10 +456,12 @@ namespace BugTracker.Controllers
             return RedirectToAction(nameof(Index));
         }
         #endregion
+        #endregion
 
         #region RESTORE
         #region GET
         // GET: Tickets/Restore/5
+        [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> Restore(int? id)
         {
             if (id == null)
@@ -487,6 +484,7 @@ namespace BugTracker.Controllers
 
         #region POST
         // POST: Tickets/Restore/5
+        [Authorize(Roles = "Admin, ProjectManager")]
         [HttpPost, ActionName("Restore")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RestoreConfirmed(int id)

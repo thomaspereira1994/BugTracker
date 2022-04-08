@@ -1,28 +1,36 @@
-﻿using BugTracker.Extensions;
+﻿#region USING STATEMENTS
+using BugTracker.Extensions;
 using BugTracker.Models;
 using BugTracker.Models.ViewModels;
 using BugTracker.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Threading.Tasks; 
+#endregion
 
 namespace BugTracker.Controllers
 {
     [Authorize]
     public class UserRolesController : Controller
     {
+        #region PRIVATE VARIABLES
         private readonly IBTRolesService _rolesService;
         private readonly IBTCompanyInfoService _companyInfoService;
+        #endregion
+
+        #region CONSTRUCTOR
         public UserRolesController(IBTRolesService rolesService, IBTCompanyInfoService companyInfoService)
         {
             _rolesService = rolesService;
             _companyInfoService = companyInfoService;
         }
+        #endregion
 
+        #region MANAGE USER ROLES
+        #region GET
         [HttpGet]
         public async Task<IActionResult> ManageUserRoles()
         {
@@ -50,7 +58,9 @@ namespace BugTracker.Controllers
 
             return View(model);
         }
+        #endregion
 
+        #region POST
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ManageUserRoles(ManageUserRolesViewModel member)
@@ -74,11 +84,13 @@ namespace BugTracker.Controllers
                 {
                     //ADD USER TO THE NEW ROLE
                     await _rolesService.AddUserToRoleAsync(btUser, userRole);
-                } 
+                }
             }
 
             //NAVIGATE BACK TO VIEW
             return RedirectToAction(nameof(ManageUserRoles));
-        }
+        } 
+        #endregion
+        #endregion
     }
 }

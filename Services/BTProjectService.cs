@@ -210,7 +210,7 @@ namespace BugTracker.Services
         #endregion
 
         #region GET ALL PROJECTS BY PRIORITY
-        public async Task<List<Project>> GetAllProjectsByPriority(int companyId, string priorityName)
+        public async Task<List<Project>> GetAllProjectsByPriorityAsync(int companyId, string priorityName)
         {
             List<Project> projectsList = await GetAllProjectsByCompanyAsync(companyId);
             int priorityId = await LookupProjectPriorityId(priorityName);

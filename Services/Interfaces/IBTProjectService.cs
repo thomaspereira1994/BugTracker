@@ -34,7 +34,7 @@ namespace BugTracker.Services.Interfaces
         #endregion
 
         #region GET ALL PROJECTS BY PRIORITY
-        public Task<List<Project>> GetAllProjectsByPriority(int companyId, string priorityName);
+        public Task<List<Project>> GetAllProjectsByPriorityAsync(int companyId, string priorityName);
 
         #endregion
 

@@ -268,7 +268,7 @@ namespace BugTracker.Controllers
                     {
                         await _projectService.AddProjectManagerAsync(model.PmId, model.Project.Id);
                     }
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Dashboard", "Home", new { User.Identity.GetCompanyId().Value });
                 }
                 catch (Exception)
                 {
@@ -330,7 +330,7 @@ namespace BugTracker.Controllers
                         await _projectService.AddProjectManagerAsync(model.PmId, model.Project.Id);
                     }
                     //TO DO: REDIRECT TO ALL PROJECTS
-                    return RedirectToAction("Index");
+                    return RedirectToAction(nameof(Details), new {id = model.Project.Id });
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -382,7 +382,7 @@ namespace BugTracker.Controllers
 
             await _projectService.ArchiveProjectAsync(project);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Dashboard", "Home", new { User.Identity.GetCompanyId().Value });
         }
         #endregion
 
@@ -422,7 +422,7 @@ namespace BugTracker.Controllers
 
             await _projectService.RestoreProjectAsync(project);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Dashboard","Home", new { User.Identity.GetCompanyId().Value });
         } 
         #endregion
         #endregion

@@ -68,7 +68,7 @@ namespace BugTracker.Controllers
 
             if (User.IsInRole(nameof(Roles.Developer)) || User.IsInRole(nameof(Roles.Submitter)))
             {
-                return View(tickets.Where(t => !t.Archived));
+                return View(tickets.Where(t => t.Archived == false));
             }
             else
             {

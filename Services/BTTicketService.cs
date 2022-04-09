@@ -45,7 +45,7 @@ namespace BugTracker.Services
 
                 throw;
             }
-        } 
+        }
         #endregion
 
         #region ADD TICKET COMMENT
@@ -168,7 +168,7 @@ namespace BugTracker.Services
 
                 throw;
             }
-        } 
+        }
         #endregion
 
         #region GET ALL TICKETS BY X METHODS
@@ -176,18 +176,18 @@ namespace BugTracker.Services
         {
             try
             {
-                List<Ticket> ticketsList = await _context.Projects
-                                                         .Where(p => p.Id == companyId)
-                                                         .SelectMany(p => p.Tickets).Include(t => t.Attachments)
-                                                                                    .Include(t => t.Comments)
-                                                                                    .Include(t => t.DeveloperUser)
-                                                                                    .Include(t => t.History)
-                                                                                    .Include(t => t.OwnerUser)
-                                                                                    .Include(t => t.TicketPriority)
-                                                                                    .Include(t => t.TicketStatus)
-                                                                                    .Include(t => t.TicketType)
-                                                                                    .Include(t => t.Project)
-                                                                                    .ToListAsync();
+                List<Ticket> ticketsList = await _context.Projects.Where(p => p.CompanyId == companyId)
+                                                                  .SelectMany(p => p.Tickets)
+                                                                  .Include(t => t.Attachments)
+                                                                  .Include(t => t.Comments)
+                                                                  .Include(t => t.History)
+                                                                  .Include(t => t.DeveloperUser)
+                                                                  .Include(t => t.OwnerUser)
+                                                                  .Include(t => t.TicketPriority)
+                                                                  .Include(t => t.TicketStatus)
+                                                                  .Include(t => t.TicketType)
+                                                                  .Include(t => t.Project)
+                                                                  .ToListAsync();
 
                 return ticketsList;
 
@@ -584,7 +584,7 @@ namespace BugTracker.Services
 
                 throw;
             }
-        } 
+        }
         #endregion
 
     }

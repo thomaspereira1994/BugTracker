@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BugTracker.Data;
 using BugTracker.Models;
+using BugTracker.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace BugTracker.Controllers
 {
@@ -11,13 +13,17 @@ namespace BugTracker.Controllers
     {
         #region PRIVATE VARIABLES
         private readonly ApplicationDbContext _context;
+        private readonly IBTRolesService _rolesService;
+        private readonly UserManager<BTUser> _userManager;
 
         #endregion
 
         #region CONSTRUCTOR
-        public CompaniesController(ApplicationDbContext context)
+        public CompaniesController(ApplicationDbContext context, IBTRolesService rolesService, UserManager<BTUser> userManager)
         {
             _context = context;
+            _rolesService = rolesService;
+            _userManager = userManager;
         }
         #endregion
 

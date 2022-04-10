@@ -53,6 +53,7 @@ namespace BugTracker.Services
             bool result = (await _userManager.AddToRoleAsync(user, roleName)).Succeeded;
             return result;
         }
+        
         #endregion
 
         #region GET ROLES BY ID

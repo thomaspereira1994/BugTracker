@@ -122,17 +122,16 @@ namespace BugTracker.Services
 
             return result;
 
-        } 
+        }
         #endregion
 
+        #region ASSIGN NEW USER TO COMPANY
         public async Task<Company> AssignNewUserToCompany(string companyName)
         {
             companyName = companyName.ToLower();
 
-
-
             List<Company> companies = await _context.Companies.ToListAsync();
-            
+
             //CHECK IF COMPANY ALREADY EXISTS, ASSIGN USER TO COMPANY IF IT DOES
             foreach (Company company in companies)
             {
@@ -142,7 +141,7 @@ namespace BugTracker.Services
                 }
             }
 
-            Company newCompany = new ();
+            Company newCompany = new();
 
             newCompany.Name = companyName;
 
@@ -153,6 +152,7 @@ namespace BugTracker.Services
 
             return newCompany;
 
-        }
+        } 
+        #endregion
     }
 }

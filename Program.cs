@@ -1,7 +1,6 @@
 using BugTracker.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -16,17 +15,8 @@ namespace BugTracker
         public async static Task Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-
-            var dataService = host.Services
-                                 .CreateScope()
-                                 .ServiceProvider
-                                 .GetRequiredService<DataUtility>();
-
-            await dataService.ManageDataAsync(host);
-
+            await DataUtility.ManageDataAsync(host);
             host.Run();
-
-            //test
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

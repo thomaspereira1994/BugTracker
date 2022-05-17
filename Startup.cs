@@ -27,8 +27,7 @@ namespace BugTracker
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(DataUtility.GetConnectionString(Configuration),
-                o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
+                options.UseNpgsql(ConnectionService.GetConnectionString(Configuration)));
 
 
             services.AddDatabaseDeveloperPageExceptionFilter();
@@ -49,6 +48,8 @@ namespace BugTracker
             services.AddScoped<IBTInviteService, BTInviteService>();
             services.AddScoped<IBTFileService, BTFileService>();
             services.AddScoped<IBTLookUpService, BTLookUpService>();
+
+            services.AddScoped<DataUtility>();
 
             //EMAIL SERVICE
             services.AddScoped<IEmailSender, BTEmailService>();

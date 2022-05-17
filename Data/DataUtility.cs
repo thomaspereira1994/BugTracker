@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace BugTracker.Data
 {
-    public static class DataUtility
+    public class DataUtility
     {
         //Company Ids
         private static int company1Id;
@@ -50,7 +50,7 @@ namespace BugTracker.Data
             return builder.ToString();
         }
 
-        public static async Task ManageDataAsync(IHost host)
+        public async Task ManageDataAsync(IHost host)
         {
             using var svcScope = host.Services.CreateScope();
             var svcProvider = svcScope.ServiceProvider;

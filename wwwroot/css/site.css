@@ -8,66 +8,67 @@ for details on configuring this project to bundle and minify static web assets. 
 }*/
 
 /* Provide sufficient contrast against white background */
-a {
-  color: #0366d6;
-}
+
 
 .btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
 }
 
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
 }
 
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
+
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .border-top {
-  border-top: 1px solid #e5e5e5;
+    border-top: 1px solid #e5e5e5;
 }
+
 .border-bottom {
-  border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
 }
 
 .box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
 }
 
 button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
+    font-size: 1rem;
+    line-height: inherit;
 }
 
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
 }
+
 .footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px; /* Vertically center the text there */
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px; /* Vertically center the text there */
 }
 
 .background-image {
@@ -77,7 +78,100 @@ body {
     background-position: center center;
 }
 
-.login-partial{
-    align-content:end;
-    align-items:end;
+.login-partial {
+    align-content: end;
+    align-items: end;
+}
+
+.left {
+    font-weight: 800;
+}
+
+
+
+.category .job {
+    height: 280px;
+    border: 1px solid transparent;
+    padding: 30px 19px 25px 19px;
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+    .category .job:hover {
+        border: 1px solid #0d6efd;
+    }
+
+    .category .job span {
+        padding: 6px 20px;
+        font-weight: 400;
+        border-radius: 26px;
+        display: inline-block;
+    }
+
+    .category .job .colors1 {
+        font-weight: 800;
+        color: #F27E42;
+        background: #f27e4242;
+    }
+
+    .category .job .colors2 {
+        font-weight: 800;
+        color: #4294F2;
+        background: rgba(66, 148, 255, 0.26);
+    }
+
+    .category .job .colors3 {
+        font-weight: 800;
+        color: #2EB98D;
+        background: rgba(46, 185, 141, 0.03);
+    }
+
+    .category .job .colors4 {
+        font-weight: 800;
+        color: #6A42F2;
+        background: rgba(106, 66, 242, 0.07);
+    }
+
+    .category .job .colors5 {
+        font-weight: 800;
+        color: #F162BC;
+        background: rgba(241, 98, 188, 0.07);
+    }
+
+    .category .job .colors2 {
+        font-weight: 800;
+        color: #4294F2;
+        background: rgba(66, 148, 255, 0.26);
+    }
+
+    .category .job span.time {
+        font-weight: 900;
+    }
+
+    .category.job a {
+        text-decoration: none;
+        font-size: 20px;
+        font-weight: 600;
+        color: #071112;
+        text-transform: capitalize;
+        margin-bottom: 17px;
+        display: block;
+    }
+
+.mt-30 {
+    margin-top: 30px;
+}
+
+.mb-30 {
+    margin-bottom: 30px;
+}
+
+.ms-20 {
+    margin-left:100px;
+
+}
+
+.card-priority{
+    place-content:flex-end;
+    align-content:flex-end;
 }

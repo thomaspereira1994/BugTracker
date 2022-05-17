@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@page
+@model BugTracker.Areas.Identity.Pages.Account.IndexModel
+@{
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -28,18 +33,30 @@
                         <div class="col-lg-5">
                             <div class="card shadow-lg border-0 rounded-lg mt-5">
                                 <div class="card-header"><h3 class="text-center font-weight-light my-4">Bug Tracker</h3></div>
-                                <div class="card-body text-center">
-                                    <div class="row justify-content-center">
-                                        <div class="col-6 mt-2 mb-2">
-                                            <a asp-area="Identity" asp-page="/Account/Index" class="btn btn-primary">Demo User</a>
-                                        </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <form method="post">
+                                            <div class="col-6 mt-2 mb-2">
+                                                <button type="submit" asp-area="Identity" asp-page="/Account/Index" asp-route-userRole="admin" class="btn btn-primary">Demo Admin</button>
+                                            </div>
+                                            <div class="col-6 mt-2 mb-2">
+                                                <button type="submit" asp-area="Identity" asp-page="/Account/Index" asp-route-userRole="pm" class="btn btn-primary">Demo Project Manager</button>
+                                            </div>
+                                            <div class="col-6 mt-2 mb-2">
+                                                <button type="submit" asp-area="Identity" asp-page="/Account/Index" asp-route-userRole="developer" class="btn btn-primary">Demo Developer</button>
+                                            </div>
+                                            <div class="col-6 mt-2 mb-2">
+                                                <button type="submit" asp-area="Identity" asp-page="/Account/Index" asp-route-userRole="submitter" class="btn btn-primary">Demo Submitter</button>
+                                            </div>
+                                        </form>
+                                        
                                     </div>
                                     <div class="card-footer text-center py-3">
                                         <div class="small">Already a member? Log in!</div>
                                         <a class="btn btn-block btn-primary mt-2" asp-area="Identity" asp-page="/Account/Login">Log in</a>
                                     </div>
                                 </div>
-                                <div class="card-footer text-center py-3">
+                                <div class="card-footer text-center ">
                                     <div class="small"><a asp-area="Identity" asp-page="/Account/Register">Need an account? Sign up!</a></div>
                                 </div>
                             </div>
@@ -52,7 +69,7 @@
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; Your Website @DateTime.Now.Year</div>
+                        <div class="text-muted">Copyright &copy;  @DateTime.Now.Year</div>
                         <div>
                             <a href="#">Privacy Policy</a>
                             &middot;

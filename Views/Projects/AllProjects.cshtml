@@ -22,101 +22,42 @@
         </p>
     }
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Name)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Description)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.StartDate)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.EndDate)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ImageFileName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ImageFileData)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ImageContentType)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Archived)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Company)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ProjectPriority)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Description)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.StartDate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.EndDate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ImageFileName)
-                    </td>
-                    <td>
-                        @if (item.ImageFileData != null)
-                        {
-                            <img style="width:60px;height:60px" src="@_imageService.ConvertByteArrayToFile(item.ImageFileData, item.ImageContentType)" />
-                        }
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ImageContentType)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Archived)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Company.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ProjectPriority.Name)
-                    </td>
-                    <td>
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+    <hr />
+    <div class="row">
+        @foreach (Project project in Model.OrderBy(p => p.Name))
+        {
+            <div class="col-sm-12 col-md-6 pt-2 pb-2">
+                <div class="card" style="height:auto; width:auto">
+                    <div class="card-body">
+                        <h4 class="card-title">@project.Name</h4>
+                        <p class="card-text">@project.Description</p>
+                        <div class="row">
+                            <div class="col">
+                                <a asp-controller="Projects" asp-action="Details" asp-route-id="@project.Id" class="btn btn-primary">Details</a>
 
-                        @{
-                            bool isProjectPM = (await _projectService.GetProjectManagerAsync(item.Id))?.Id == btUser.Id;
-                        }
+                                @{
+                                    bool isProjectPM = (await _projectService.GetProjectManagerAsync(project.Id))?.Id == btUser.Id;
 
-                        @if (User.IsInRole(nameof(Roles.Admin)) || isProjectPM)
-                        {
-                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                            @if (item.Archived)
-                            {
-                                <a asp-action="Restore" asp-route-id="@item.Id">Restore</a>
-                            }
-                            else
-                            {
-                                <a asp-action="Archive" asp-route-id="@item.Id">Archive</a>
-                            }
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+
+                                    if (User.IsInRole(nameof(Roles.Admin)) || isProjectPM)
+                                    {
+                                        <a class="btn btn-primary" asp-controller="Projects" asp-action="Edit" asp-route-id="@project.Id">Edit</a>
+                                        @if (project.Archived)
+                                        {
+                                            <a class="btn btn-success" asp-action="Restore" asp-controller="Projects" asp-route-id="@project.Id">Restore</a>
+                                        }
+                                        else
+                                        {
+                                            <a class="btn btn-danger" asp-controller="Projects" asp-action="Archive" asp-route-id="@project.Id">Archive</a>
+                                        }
+                                    }
+                                }
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>

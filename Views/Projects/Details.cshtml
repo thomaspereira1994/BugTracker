@@ -237,9 +237,9 @@
                                                         <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-controller="Tickets" asp-route-id="@ticket.Id"><i class="fs-5 bi-pencil"></i></a>
                                                     }
 
-                                                    @if (User.IsInRole("Admin") || (projectManager?.Id == btUser.Id))
+                                                    @if (User.IsInRole(nameof(Roles.Admin)) || (projectManager?.Id == btUser.Id))
                                                     {
-                                                        <a class="btn btn-sm btn-outline-danger"><i class="fs-5 bi-archive"></i></a>
+                                                        <a asp-action="Archive" asp-controller="Tickets" asp-route-id="@ticket.Id" class="btn btn-sm btn-outline-danger"><i class="fs-5 bi-archive"></i></a>
                                                     }
                                                 </td>
                                             </tr>

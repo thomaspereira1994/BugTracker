@@ -12,23 +12,27 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 namespace BugTracker.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class LoginModel : PageModel
     {
-        private readonly UserManager<BTUser> _userManager;
         private readonly SignInManager<BTUser> _signInManager;
+        private readonly UserManager<BTUser> _userManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly IConfiguration _configuration;
 
-        public LoginModel(SignInManager<BTUser> signInManager, 
-            ILogger<LoginModel> logger,
-            UserManager<BTUser> userManager)
+        public LoginModel(SignInManager<BTUser> signInManager,
+                          UserManager<BTUser> userManager,
+                          ILogger<LoginModel> logger,
+                          IConfiguration configuration)
         {
-            _userManager = userManager;
             _signInManager = signInManager;
+            _userManager = userManager;
             _logger = logger;
+            _configuration = configuration;
         }
 
         [BindProperty]
@@ -107,5 +111,59 @@ namespace BugTracker.Areas.Identity.Pages.Account
             // If we got this far, something failed, redisplay form
             return Page();
         }
+
+    //    public async Task<IActionResult> OnPostAsync(string userRole, string? notNeeded)
+    //    {
+    //        string returnUrl = "~/Home/Dashboard";
+
+    //        string userEmail = "";
+    //        string userPassword = "";
+
+    //        switch (userRole)
+    //        {
+    //            case "admin":
+    //                userEmail = _configuration["AdminUsername"];
+    //                userPassword = _configuration["AdminPassword"];
+    //                break;
+
+    //            case "pm":
+    //                userEmail = _configuration["PMUsername"];
+    //                userPassword = _configuration["PMPassword"];
+    //                break;
+
+    //            case "developer":
+    //                userEmail = _configuration["DeveloperUsername"];
+    //                userPassword = _configuration["DeveloperPassword"];
+    //                break;
+
+    //            case "submitter":
+    //                userEmail = _configuration["SubmitterUsername"];
+    //                userPassword = _configuration["AdminPassword"];
+    //                break;
+    //        }
+
+    //        var result = await _signInManager.PasswordSignInAsync(userEmail, userPassword, false, lockoutOnFailure: false);
+
+    //        if (result.Succeeded)
+    //        {
+    //            _logger.LogInformation("User logged in.");
+    //            return LocalRedirect(returnUrl);
+    //        }
+    //        if (result.RequiresTwoFactor)
+    //        {
+    //            return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
+    //        }
+    //        if (result.IsLockedOut)
+    //        {
+    //            _logger.LogWarning("User account locked out.");
+    //            return RedirectToPage("./Lockout");
+    //        }
+    //        else
+    //        {
+    //            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+    //            return Page();
+    //        }
+    //    }
+    //
     }
 }

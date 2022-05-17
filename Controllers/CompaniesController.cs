@@ -13,17 +13,19 @@ namespace BugTracker.Controllers
     {
         #region PRIVATE VARIABLES
         private readonly ApplicationDbContext _context;
-        private readonly IBTRolesService _rolesService;
         private readonly UserManager<BTUser> _userManager;
+        private readonly IBTRolesService _rolesService;
+        private readonly IBTCompanyInfoService _companyInfoService;
 
         #endregion
 
         #region CONSTRUCTOR
-        public CompaniesController(ApplicationDbContext context, IBTRolesService rolesService, UserManager<BTUser> userManager)
+        public CompaniesController(ApplicationDbContext context, IBTRolesService rolesService, UserManager<BTUser> userManager, IBTCompanyInfoService companyInfoService)
         {
             _context = context;
             _rolesService = rolesService;
             _userManager = userManager;
+            _companyInfoService = companyInfoService;
         }
         #endregion
 
@@ -32,6 +34,13 @@ namespace BugTracker.Controllers
         public async Task<IActionResult> Index()
         {
             return View(await _context.Companies.ToListAsync());
+        }
+        #endregion
+
+        #region ALL MEMBERS
+        public async Task<IActionResult> AllMembers(int companyId)
+        {
+            return View(await _companyInfoService.GetAllMembersAsync(companyId));
         }
         #endregion
 

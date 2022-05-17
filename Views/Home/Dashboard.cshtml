@@ -40,7 +40,7 @@
             }
             else
             {
-                <img class="media-object" src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" alt="" style="width:30px; height:30px;" />
+                <img class="media-object" src=~/img/avatardefault.png alt="" style="width:30px; height:30px;" />
             }
         </a>
         @* Get The btUser FullName *@
@@ -214,27 +214,6 @@
                                 </div>
                                 <div class="card-footer">
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="bg-dark">
-                        <div class="card m-1 p-2">
-                            <div class="card-header">
-                                <h2>Members</h2>
-                                <hr />
-                            </div>
-                            <div class="card-body" style="overflow-y:auto;height:600px;background-color:antiquewhite">
-                                @* Looop over Company members. Display Name and Role *@
-                                @foreach (BTUser member in Model.Members)
-                                {
-                                    <div class="">
-                                        <span style="font-weight:bold">@member.FullName</span>
-                                        <h6>@((await RolesService.GetUserRolesAsync(member)).FirstOrDefault())</h6>
-                                    </div>
-                                    <hr />
-                                }
                             </div>
                         </div>
                     </div>

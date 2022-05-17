@@ -30,16 +30,26 @@
             <!-- Sidebar Toggle-->
             <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0 ms-2" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
             <!-- Navbar Brand-->
-            <a class="navbar-brand ps-3" asp-controller="Home" asp-action="Dashboard">Bug Tracker</a>
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <a class="navbar-brand ps-3" asp-controller="Home" asp-action="Dashboard">Bug Tracker</a>
+            }
+            else
+            {
+                <a class="navbar-brand ps-3" href="#">Bug Tracker</a>
+            }
             <!-- Navbar Search-->
             <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0" hidden>
             </form>
             <!-- Navbar-->
-            <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
-                <li class="nav-item dropdown">
-                    <partial name="_LoginPartial" />
-                </li>
-            </ul>
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+                    <li class="nav-item dropdown">
+                        <partial name="_LoginPartial" />
+                    </li>
+                </ul>
+            }
         </nav>
     </nav>
 
@@ -101,7 +111,11 @@
                                     {
                                         <a class="nav-link" asp-controller="Tickets" asp-action="MyTickets">My Tickets</a>
                                     }
-                                    <a class="nav-link" asp-controller="Tickets" asp-action="AllTickets">All Tickets</a>
+                                    else
+                                    {
+                                        <a class="nav-link" asp-controller="Tickets" asp-action="AllTickets">All Tickets</a>
+
+                                    }
                                     <a class="nav-link" asp-controller="Tickets" asp-action="ArchivedTickets">Archived Tickets</a>
                                     @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
                                     {
@@ -119,7 +133,7 @@
                             <div class="collapse" id="collapseCompany" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
 
-                                    <a class="nav-link" asp-controller="Tickets" asp-action="Create">Members</a>
+                                    <a class="nav-link" asp-controller="Companies" asp-action="AllMembers" asp-route-companyId="@btUser.CompanyId">Members</a>
 
                                     @if (User.IsInRole(nameof(Roles.Admin)))
                                     {
@@ -129,7 +143,7 @@
                             </div>
                             <!-- END COMPANY REGION-->
 
-                            <div class="sb-sidenav-menu-heading">Addons</div>
+                            <!--<div class="sb-sidenav-menu-heading">Addons</div>
                             <a class="nav-link" href="charts.html">
                                 <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                                 Charts
@@ -137,7 +151,7 @@
                             <a class="nav-link" href="tables.html">
                                 <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
                                 Tables
-                            </a>
+                            </a>-->
                         </div>
                     </div>
                 }

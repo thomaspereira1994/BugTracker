@@ -5,119 +5,116 @@
 
 @inject UserManager<BTUser> UserManager
 @inject IBTProjectService ProjectService
+@inject SignInManager<BTUser> SignInManager
 
 @{
     ViewData["Title"] = "All Tickets";
     BTUser btUser = await UserManager.GetUserAsync(User);
 }
 
-<h1>All Tickets</h1>
+<div class="ms-4 me-4">
+    <h1>All Tickets</h1>
+    <p>
+        <a class="btn btn-primary " asp-action="Create">Create New</a>
+    </p>
+    <hr />
+    <div class="container">
+        
+        <div class="row">
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Created)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Updated)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Archived)
-            </th>
-            
-            <th>
-                @Html.DisplayNameFor(model => model.Project)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TicketType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TicketPriority)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TicketStatus)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OwnerUser)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DeveloperUser)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.OrderByDescending(m => m.Created))
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Created)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Updated)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Archived)
-                </td>
+            @foreach (Ticket ticket in Model.OrderBy(t => t.Project.Name)
+                                            .ThenBy(t => t.TicketPriority.Id))
+                                            
+            {
+                <div class="col-lg-4 col-md-6 col-sm-6">
+                    <div class="category mb-30">
+                        <div class="job">
+                            <div class="row">
+                                <div class="col">
+                                    <h3>
+                                        <a class="ticket-title" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id">@ticket.Title</a>
+                                    </h3>
+                                </div>
+                                <div class="col">
+                                    @switch (ticket.TicketPriority.Name)
+                                    {
+                                        case nameof(BTTicketPriority.Urgent):
+                                            {
+                                                <span class="bg-danger mb-4 ms-20">@ticket.TicketPriority.Name</span>
+
+                                                break;
+                                            }
+
+                                        case nameof(BTTicketPriority.High):
+                                            {
+                                                <span class="bg-warning mb-4 ms-20">@ticket.TicketPriority.Name</span>
+                                                break;
+
+                                            }
+                                        case nameof(BTTicketPriority.Medium):
+                                            {
+                                                <span class="bg-info mb-4 ms-20">@ticket.TicketPriority.Name</span>
+                                                break;
+
+                                            }
+                                        case nameof(BTTicketPriority.Low):
+                                            {
+                                                <span class="bg-primary mb-4 ms-20">@ticket.TicketPriority.Name</span>
+                                                break;
+
+                                            }
+                                        default: break;
+                                    }
+
+                                </div>
+                            </div>
+
+                            <hr />
+                            <div class="row">
+                                <div class="col">
+                                    @if (string.IsNullOrEmpty(ticket.DeveloperUserId))
+                                    {
+                                        <h5>Developer: Unassigned</h5>
+                                    }
+                                    else
+                                    {
+                                        <h5>Developer: @ticket.DeveloperUser.FullName</h5>
+                                    }
+                                </div>
+                                <div class="col">
+                                    <h5>Status: @ticket.TicketStatus.Name</h5>
+                                </div>
+                            </div>
+
+                            <div class="">
+                                <a class="btn btn-primary" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id">Details</a>
+
+                                @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)) || btUser.Id == ticket.DeveloperUserId)
+                                {
+                                    <a class="btn btn-primary" asp-action="Edit" asp-controller="Tickets" asp-route-id="@ticket.Id">Edit</a>
+                                }
+
+                                @if (User.IsInRole(nameof(Roles.Admin)))
+                                {
+                                    if (!ticket.Archived)
+                                    {
+                                        <a class="btn btn-danger" asp-action="Archive" asp-controller="Tickets" asp-route-id="@ticket.Id">Archive</a>
+                                    }
+                                    else
+                                    {
+                                        <a class="btn btn-success" asp-action="Restore" asp-controller="Tickets" asp-route-id="@ticket.Id">Restore</a>
+                                    }
+                                }
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
                 
-                <td>
-                    @Html.DisplayFor(modelItem => item.Project.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TicketType.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TicketPriority.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TicketStatus.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.OwnerUser.FullName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DeveloperUser.FullName)
-                </td>
-                <td>
+            }
+        </div>
 
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-
-                    @if (User.IsInRole(nameof(Roles.Admin)) || item.DeveloperUserId == btUser.Id || item.OwnerUserId == btUser.Id || await ProjectService.IsAssignedProjectManagerAsync(btUser.Id, item.ProjectId))
-                    {
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                    }
-
-                    @if (User.IsInRole(nameof(Roles.Admin)) || await ProjectService.IsAssignedProjectManagerAsync(btUser.Id, item.ProjectId))
-                    {
-                        if (item.Archived)
-                        {
-                            <a asp-action="Restore" asp-route-id="@item.Id">Restore</a>
-                        }
-                        else
-                        {
-                            <a asp-action="Archive" asp-route-id="@item.Id">Archive</a>
-
-                        }
-                    }
-
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+        
+    </div>
+</div>

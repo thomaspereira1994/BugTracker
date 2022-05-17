@@ -1,80 +1,59 @@
 ﻿@model IEnumerable<BugTracker.Models.Project>
-@inject BugTracker.Services.Interfaces.IBTFileService _imageService
+@using BugTracker.Models.Enums
+@using Microsoft.AspNetCore.Identity
+@using BugTracker.Services.Interfaces
+
+@inject UserManager<BTUser> UserManager
+@inject IBTProjectService _projectService
+@inject IBTFileService _imageService
+
 @{
     ViewData["Title"] = "Unassigned Projects";
+    BTUser btUser = await UserManager.GetUserAsync(User);
 }
 
-<h1>Unassigned Projects</h1>
+<div class="ms-4 me-4 ">
+    <h1>Unassigned Projects</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndDate)
-            </th>
-            
-            <th>
-                @Html.DisplayNameFor(model => model.ImageFileData)
-            </th>
-            
-            <th>
-                @Html.DisplayNameFor(model => model.Archived)
-            </th>
-            
-            <th>
-                @Html.DisplayNameFor(model => model.ProjectPriority)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+    <hr />
+    <div class="row">
+        @foreach (Project project in Model.OrderBy(p => p.Name))
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StartDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EndDate)
-                </td>
-                
-                <td>
-                    @if (item.ImageFileData != null)
-                    {
-                        <img style="width:60px;height:60px" src="@_imageService.ConvertByteArrayToFile(item.ImageFileData, item.ImageContentType)" />
-                    }
-                </td>
-                
-                <td>
-                    @Html.DisplayFor(modelItem => item.Archived)
-                </td>
-                
-                <td>
-                    @Html.DisplayFor(modelItem => item.ProjectPriority.Name)
-                </td>
-                <td>
-                    <a class="btn btn-sm btn-outline-secondary" asp-action="AssignPM" asp-route-projectId="@item.Id">Add PM</a>
-                   
-                </td>
-            </tr>
+            <div class="col-sm-12 col-md-6 pt-2 pb-2">
+                <div class="card" style="height:auto; width:auto">
+                    <div class="card-body">
+                        <h4 class="card-title">@project.Name</h4>
+                        <p class="card-text">@project.Description</p>
+                        <div class="row">
+                            <div class="col">
+                                <a asp-controller="Projects" asp-action="Details" asp-route-id="@project.Id" class="btn btn-primary">Details</a>
+
+                                @{
+                                    //bool isProjectPM = (await _projectService.GetProjectManagerAsync(project.Id))?.Id == btUser.Id;
+
+
+                                    if (User.IsInRole(nameof(Roles.Admin)))
+                                    {
+                                        <a class="btn btn-primary" asp-controller="Projects" asp-action="Edit" asp-route-id="@project.Id">Edit</a>
+
+                                        <a class="btn btn-primary" asp-controller="Projects" asp-action="AssignPm" asp-route-projectId="@project.Id">Assign PM</a>
+
+                                        @if (project.Archived)
+                                        {
+                                            <a class="btn btn-success" asp-action="Restore" asp-controller="Projects" asp-route-id="@project.Id">Restore</a>
+                                        }
+                                        else
+                                        {
+                                            <a class="btn btn-danger" asp-controller="Projects" asp-action="Archive" asp-route-id="@project.Id">Archive</a>
+                                        }
+                                    }
+                                }
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
         }
-    </tbody>
-</table>
+    </div>
+</div>

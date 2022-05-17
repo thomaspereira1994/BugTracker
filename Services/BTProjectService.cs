@@ -227,18 +227,18 @@ namespace BugTracker.Services
             try
             {
                 List<Project> projectsList = new();
-                projectsList = await _context.Projects.Where(c => c.Id == companyId && c.Archived == true).Include(p => p.Members)
-                                                                                                           .Include(p => p.Tickets).ThenInclude(t => t.Comments)
-                                                                                                           .Include(p => p.Tickets).ThenInclude(t => t.Attachments)
-                                                                                                           .Include(p => p.Tickets).ThenInclude(t => t.History)
-                                                                                                           .Include(p => p.Tickets).ThenInclude(t => t.DeveloperUser)
-                                                                                                           .Include(p => p.Tickets).ThenInclude(t => t.OwnerUser)
-                                                                                                           .Include(p => p.Tickets).ThenInclude(t => t.Notifications)
-                                                                                                           .Include(p => p.Tickets).ThenInclude(t => t.TicketStatus)
-                                                                                                           .Include(p => p.Tickets).ThenInclude(t => t.TicketPriority)
-                                                                                                           .Include(p => p.Tickets).ThenInclude(t => t.TicketType)
-                                                                                                           .Include(p => p.ProjectPriority)
-                                                                                                           .ToListAsync();
+                projectsList = await _context.Projects.Where(c => c.CompanyId == companyId && c.Archived == true).Include(p => p.Members)
+                                                                                                          .Include(p => p.Tickets).ThenInclude(t => t.Attachments)
+                                                                                                          .Include(p => p.Tickets).ThenInclude(t => t.Comments)
+                                                                                                          .Include(p => p.Tickets).ThenInclude(t => t.History)
+                                                                                                          .Include(p => p.Tickets).ThenInclude(t => t.DeveloperUser)
+                                                                                                          .Include(p => p.Tickets).ThenInclude(t => t.OwnerUser)
+                                                                                                          .Include(p => p.Tickets).ThenInclude(t => t.Notifications)
+                                                                                                          .Include(p => p.Tickets).ThenInclude(t => t.TicketStatus)
+                                                                                                          .Include(p => p.Tickets).ThenInclude(t => t.TicketPriority)
+                                                                                                          .Include(p => p.Tickets).ThenInclude(t => t.TicketType)
+                                                                                                          .Include(p => p.ProjectPriority)
+                                                                                                          .ToListAsync();
 
                 return projectsList;
             }

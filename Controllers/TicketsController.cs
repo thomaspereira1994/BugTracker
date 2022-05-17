@@ -53,7 +53,7 @@ namespace BugTracker.Controllers
         {
             BTUser btUser = await _userManager.GetUserAsync(User);
 
-            List<Ticket> tickets = await _ticketService.GetTicketsByUserIdAsync(btUser.Id, btUser.CompanyId);
+            List<Ticket> tickets = await _ticketService.GetTicketsByUserIdAsync(btUser.Id, btUser.CompanyId.Value);
 
             return View(tickets);
         }
@@ -256,7 +256,7 @@ namespace BugTracker.Controllers
 
             if (User.IsInRole(nameof(Roles.Admin)))
             {
-                ViewData["ProjectId"] = new SelectList(await _projectService.GetAllProjectsByCompanyAsync(btUser.CompanyId), "Id", "Name");
+                ViewData["ProjectId"] = new SelectList(await _projectService.GetAllProjectsByCompanyAsync(btUser.CompanyId.Value), "Id", "Name");
             }
             else
             {
@@ -453,7 +453,7 @@ namespace BugTracker.Controllers
 
             await _ticketService.ArchiveTicketAsync(ticket);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(AllTickets));
         }
         #endregion
         #endregion
@@ -493,7 +493,7 @@ namespace BugTracker.Controllers
 
             await _ticketService.RestoreTicketAsync(ticket);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(AllTickets));
         }
         #endregion
         #endregion

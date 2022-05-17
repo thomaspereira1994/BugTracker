@@ -1,3 +1,12 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Identity
+@using BugTracker.Models.Enums
+@inject SignInManager<BTUser> SignInManager
+@inject UserManager<BTUser> UserManager
+
+@{
+    BTUser btUser = await UserManager.GetUserAsync(User);
+}
+
+@{
     Layout = "_Layout";
 }

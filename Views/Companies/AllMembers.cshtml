@@ -1,0 +1,26 @@
+﻿@model IEnumerable<BTUser>
+@using BugTracker.Services.Interfaces
+
+@inject IBTRolesService RolesService
+
+<div class="row">
+    <div class="bg-dark">
+        <div class="card m-1 p-2">
+            <div class="card-header">
+                <h2>Members</h2>
+                <hr />
+            </div>
+            <div class="card-body" style="overflow-y:auto;height:600px;background-color:antiquewhite">
+                @* Looop over Company members. Display Name and Role *@
+                @foreach (BTUser member in Model)
+                {
+                    <div class="">
+                        <span style="font-weight:bold">@member.FullName</span>
+                        <h6>@((await RolesService.GetUserRolesAsync(member)).FirstOrDefault())</h6>
+                    </div>
+                    <hr />
+                }
+            </div>
+        </div>
+    </div>
+</div>

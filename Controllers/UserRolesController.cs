@@ -60,6 +60,8 @@ namespace BugTracker.Controllers
         }
         #endregion
 
+
+
         #region POST
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -89,7 +91,7 @@ namespace BugTracker.Controllers
 
             //NAVIGATE BACK TO VIEW
             return RedirectToAction(nameof(ManageUserRoles));
-        } 
+        }
         #endregion
         #endregion
     }

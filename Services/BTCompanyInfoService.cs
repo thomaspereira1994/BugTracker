@@ -1,5 +1,6 @@
 ﻿using BugTracker.Data;
 using BugTracker.Models;
+using BugTracker.Models.Enums;
 using BugTracker.Services.Interfaces;
 
 using Microsoft.AspNetCore.Identity;
@@ -18,15 +19,47 @@ namespace BugTracker.Services
         private readonly ApplicationDbContext _context;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<BTUser> _userManager;
+        private readonly IBTRolesService _rolesService;
+        #endregion
 
-        public BTCompanyInfoService(ApplicationDbContext context, RoleManager<IdentityRole> roleManager, UserManager<BTUser> userManager)
+        #region CONSTRUCTOR
+        public BTCompanyInfoService(ApplicationDbContext context, RoleManager<IdentityRole> roleManager, UserManager<BTUser> userManager, IBTRolesService rolesService)
         {
             _context = context;
             _roleManager = roleManager;
             _userManager = userManager;
+            _rolesService = rolesService;
         }
         #endregion
 
+        #region ADD COMPANY
+        public async Task AddCompanyAsync(Company company)
+        {
+            try
+            {
+                await _context.AddAsync(company);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        #endregion
+
+        //#region CREATE NEW COMPANY
+        //Company CreateNewCompany(string companyName)
+        //{
+        //    Company company = new();
+
+            
+
+        //    company.Name = companyName;
+        //}
+        //#endregion
+
+        #region GET ALL MEMBERS IN A COMPANY
         public async Task<List<BTUser>> GetAllMembersAsync(int companyId)
         {
             List<BTUser> membersList = new();
@@ -35,7 +68,9 @@ namespace BugTracker.Services
 
             return membersList;
         }
+        #endregion
 
+        #region GET ALL PROJECTS IN A COMPANY
         public async Task<List<Project>> GetAllProjectsAsync(int companyId)
         {
             List<Project> projectsList = new();
@@ -55,7 +90,9 @@ namespace BugTracker.Services
 
             return projectsList;
         }
+        #endregion
 
+        #region GET ALL TICKETS IN A COMPANY
         public async Task<List<Ticket>> GetallTicketsAsync(int companyId)
         {
             List<Ticket> ticketsList = new();
@@ -67,7 +104,9 @@ namespace BugTracker.Services
 
             return ticketsList;
         }
+        #endregion
 
+        #region GET COMPANY INFO BY ID
         public async Task<Company> GetCompanyInfoByIdAsync(int? companyId)
         {
             Company result = new();
@@ -84,5 +123,36 @@ namespace BugTracker.Services
             return result;
 
         }
+        #endregion
+
+        #region ASSIGN NEW USER TO COMPANY
+        public async Task<Company> AssignNewUserToCompany(string companyName)
+        {
+            companyName = companyName.ToLower();
+
+            List<Company> companies = await _context.Companies.ToListAsync();
+
+            //CHECK IF COMPANY ALREADY EXISTS, ASSIGN USER TO COMPANY IF IT DOES
+            foreach (Company company in companies)
+            {
+                if (companyName == company.Name.ToLower())
+                {
+                    return company;
+                }
+            }
+
+            Company newCompany = new();
+
+            newCompany.Name = companyName;
+
+            await AddCompanyAsync(newCompany);
+
+            //await  _rolesService.AddUserToRoleAsync(User, nameof(Roles.Admin));
+
+
+            return newCompany;
+
+        } 
+        #endregion
     }
 }

@@ -15,7 +15,9 @@ namespace BugTracker
         public async static Task Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
+
             await DataUtility.ManageDataAsync(host);
+            
             host.Run();
         }
 

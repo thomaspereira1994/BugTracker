@@ -17,18 +17,18 @@
                     <div asp-validation-summary="All" class="text-danger"></div>
                     <div class="form-group">
                         <label asp-for="Input.Email"></label>
-                        <input asp-for="Input.Email" class="form-control" />
+                        <input id="userEmail" asp-for="Input.Email" class="form-control" />
                         <span asp-validation-for="Input.Email" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="Input.Password"></label>
-                        <input asp-for="Input.Password" class="form-control" />
+                        <input id="userPassword" asp-for="Input.Password" class="form-control" />
                         <span asp-validation-for="Input.Password" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <div class="checkbox">
                             <label asp-for="Input.RememberMe">
-                                <input asp-for="Input.RememberMe" />
+                                <input id="userRememberMe" asp-for="Input.RememberMe" />
                                 @Html.DisplayNameFor(m => m.Input.RememberMe)
                             </label>
                         </div>
@@ -52,7 +52,7 @@
         </div>
         <div class="col-md-4">
             <section>
-                <form id="account" method="post">
+                <form id="demoAccount" method="post">
                     <h4>Use a demo account.</h4>
                     <hr />
                     <div asp-validation-summary="All" class="text-danger"></div>
@@ -71,19 +71,19 @@
                     </div>
 
                     <div class="form-group" hidden>
-                        <label asp-for="Input.Email" hidden></label>
-                        <input asp-for="Input.Email" hidden class="form-control" />
-                        <span asp-validation-for="Input.Email" hidden class="text-danger"></span>
+                        <label asp-for="Input.Email"></label>
+                        <input id="demoAccountEmail" asp-for="Input.Email" class="form-control" />
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
                     </div>
                     <div class="form-group" hidden>
                         <label asp-for="Input.Password"></label>
-                        <input asp-for="Input.Password" class="form-control" />
+                        <input id="demoAccountPassword" asp-for="Input.Password" class="form-control" />
                         <span asp-validation-for="Input.Password" class="text-danger"></span>
                     </div>
                     <div class="form-group" hidden>
                         <div class="checkbox">
                             <label asp-for="Input.RememberMe">
-                                <input asp-for="Input.RememberMe" />
+                                <input id="demoAccountRememberMe" asp-for="Input.RememberMe" />
                                 @Html.DisplayNameFor(m => m.Input.RememberMe)
                             </label>
                         </div>

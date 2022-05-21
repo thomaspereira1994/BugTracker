@@ -76,11 +76,42 @@ namespace BugTracker.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+        public async Task<IActionResult> OnPostAsync(string? demoUserRole, string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/Home/Dashboard");
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+            if (!string.IsNullOrEmpty(demoUserRole))
+            {
+                switch (demoUserRole)
+                {
+                    case "admin":
+                        Input.Email = _configuration["AdminEmail"];
+                        Input.Password = _configuration["DemoPassword"];
+                        Input.RememberMe = false;
+                        break;
+
+                    case "pm":
+                        Input.Email = _configuration["PMEmail"];
+                        Input.Password = _configuration["DemoPassword"];
+                        Input.RememberMe = false;
+                        break;
+
+                    case "developer":
+                        Input.Email = _configuration["DeveloperEmail"];
+                        Input.Password = _configuration["DemoPassword"];
+                        Input.RememberMe = false;
+                        break;
+
+                    case "submitter":
+                        Input.Email = _configuration["SubmitterEmail"];
+                        Input.Password = _configuration["DemoPassword"];
+                        Input.RememberMe = false;
+                        break;
+                }
+                    
+            }
         
             if (ModelState.IsValid)
             {

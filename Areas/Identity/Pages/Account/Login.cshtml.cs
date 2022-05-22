@@ -106,6 +106,7 @@ namespace BugTracker.Areas.Identity.Pages.Account
                         Input.RememberMe = false;
                         break;
 
+
                     case "submitter":
                         Input.Email = _configuration["SubmitterEmail"];
                         Input.Password = _configuration["DemoPassword"];

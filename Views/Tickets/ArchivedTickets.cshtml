@@ -88,6 +88,7 @@
                             @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
                             {
                                 <a class="btn btn-primary" asp-action="Edit" asp-controller="Tickets" asp-route-id="@ticket.Id">Edit</a>
+
                             }
 
                             @if (User.IsInRole(nameof(Roles.Admin)))

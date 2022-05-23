@@ -3,98 +3,90 @@
 
 @{
     ViewData["Title"] = "Log in";
-    
+
 }
 
 <div class="ps-4 pe-4 ">
     <h1>@ViewData["Title"]</h1>
     <div class="row">
-
-        <!--
-
-    <div class="col-md-4">
-        <section>
-            <form method="post">
-                <h4>Use a local account to log in.</h4>
-                <hr />
-                <div asp-validation-summary="All" class="text-danger"></div>
-                <div class="form-group">
-                    <label asp-for="Input.Email"></label>
-                    <input id="userEmail" asp-for="Input.Email" class="form-control" />
-                    <span asp-validation-for="Input.Email" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Input.Password"></label>
-                    <input id="userPassword" asp-for="Input.Password" class="form-control" />
-                    <span asp-validation-for="Input.Password" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <div class="checkbox">
-                        <label asp-for="Input.RememberMe">
-                            <input id="userRememberMe" asp-for="Input.RememberMe" />
-                            @Html.DisplayNameFor(m => m.Input.RememberMe)
-                        </label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Log in</button>
-                </div>
-                <div class="form-group">
-                    <p>
-                        <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
-                    </p>
-                    <p>
-                        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
-                    </p>
-                    <p>
-                        <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
-                    </p>
-                </div>
-            </form>
-        </section>
-    </div>
-
-    -->
         <div class="col-md-4">
             <section>
-                <form id="account" method="post">
-                    <h4>Use a demo account.</h4>
+                <form method="post">
+                    <h4>Use a local account to log in.</h4>
                     <hr />
                     <div asp-validation-summary="All" class="text-danger"></div>
-
-                    <div class="form-group pt-4 pb-4 ">
-                        <button type="submit" asp-route-demoUserRole="admin" class="btn btn-primary">Admin Demo</button>
-                    </div>
-                    <div class="form-group pb-4 ">
-                        <button type="submit" asp-route-demoUserRole="pm" class="btn btn-primary">PM Demo</button>
-                    </div>
-                    <div class="form-group pb-4 ">
-                        <button type="submit" asp-route-demoUserRole="developer" class="btn btn-primary">Developer Demo</button>
-                    </div>
-                    <div class="form-group pb-4 ">
-                        <button type="submit" asp-route-demoUserRole="submitter" class="btn btn-primary">Submitter Demo</button>
-                    </div>
-
-                    <div class="form-group" hidden>
+                    <div class="form-group">
                         <label asp-for="Input.Email"></label>
-                        <input asp-for="Input.Email" class="form-control" />
+                        <input id="userEmail" asp-for="Input.Email" class="form-control" />
                         <span asp-validation-for="Input.Email" class="text-danger"></span>
                     </div>
-                    <div class="form-group" hidden>
+                    <div class="form-group">
                         <label asp-for="Input.Password"></label>
-                        <input asp-for="Input.Password" class="form-control" />
+                        <input id="userPassword" asp-for="Input.Password" class="form-control" />
                         <span asp-validation-for="Input.Password" class="text-danger"></span>
                     </div>
-                    <div class="form-group" hidden>
+                    <div class="form-group">
                         <div class="checkbox">
                             <label asp-for="Input.RememberMe">
-                                <input asp-for="Input.RememberMe" />
+                                <input id="userRememberMe" asp-for="Input.RememberMe" />
                                 @Html.DisplayNameFor(m => m.Input.RememberMe)
                             </label>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Log in</button>
+                    </div>
+                    <div class="form-group">
+                        <p>
+                            <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
+                        </p>
+                        <p>
+                            <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
+                        </p>
+                        <p>
+                            <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
+                        </p>
+                    </div>
                 </form>
             </section>
+        </div>
+
+        <div class="col-md-4">
+            <h4>Try demo accounts with these credentials</h4>
+
+            <div class="card">
+                <h5 class="font-weight-bolder">Admin Demo</h5>
+                <hr />
+                <h6>Email: demoadmin@bugtracker.com</h6>
+                <h6>Password: Abc&123!</h6>
+                <div class="card-footer"></div>
+            </div>
+
+            <div class="card">
+                <h5 class="font-weight-bolder">Project Manager Demo</h5>
+                <hr />
+                <h6>Email: demopm@bugtracker.com</h6>
+                <h6>Password: Abc&123!</h6>
+                <div class="card-footer"></div>
+            </div>
+
+            <div class="card">
+                <h5 class="font-weight-bolder">Developer Demo</h5>
+                <hr />
+                <h6>Email: demodev@bugtracker.com</h6>
+                <h6>Password: Abc&123!</h6>
+                <div class="card-footer"></div>
+            </div>
+
+            <div class="card">
+                <h5 class="font-weight-bolder">Submitter Demo</h5>
+                <hr />
+                <h6>Email: demosub@bugtracker.com</h6>
+                <h6>Password: Abc&123!</h6>
+                <div class="card-footer"></div>
+            </div>
+
+
         </div>
     </div>
 </div>

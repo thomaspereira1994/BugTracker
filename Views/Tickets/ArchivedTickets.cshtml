@@ -85,7 +85,7 @@
                         <div class="">
                             <a class="btn btn-primary" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id">Details</a>
 
-                            @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)) || btUser.Id == ticket.DeveloperUser.Id)
+                            @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
                             {
                                 <a class="btn btn-primary" asp-action="Edit" asp-controller="Tickets" asp-route-id="@ticket.Id">Edit</a>
                             }

@@ -1,6 +1,4 @@
-﻿
-
-@model IEnumerable<BugTracker.Models.Ticket>
+﻿@model IEnumerable<BugTracker.Models.Ticket>
 @using Microsoft.AspNetCore.Identity
 @using BugTracker.Services.Interfaces
 @using BugTracker.Models.Enums
@@ -13,11 +11,11 @@
     BTUser btUser = await UserManager.GetUserAsync(User);
 }
 
+<div class="container">
 <h1>Unassigned Tickets</h1>
 
 
 <hr />
-<div class="container">
 
     <div class="row">
 

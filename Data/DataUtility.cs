@@ -15,6 +15,9 @@ namespace BugTracker.Data
 {
     public static class DataUtility
     {
+
+        private static SignInManager<BTUser> signInManager;
+
         //Company Ids
         private static int company1Id;
         private static int company2Id;

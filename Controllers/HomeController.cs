@@ -5,6 +5,7 @@ using BugTracker.Models.ChartModels;
 using BugTracker.Models.Enums;
 using BugTracker.Models.ViewModels;
 using BugTracker.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -23,22 +24,28 @@ namespace BugTracker.Controllers
         private readonly IBTCompanyInfoService _companyInfoService;
         private readonly IBTProjectService _projectService;
         private readonly IBTTicketService _ticketService;
+        private readonly SignInManager<BTUser> _signInManager;
         #endregion
 
         #region CONSTRUCTOR
-        public HomeController(ILogger<HomeController> logger, IBTCompanyInfoService companyService, IBTProjectService projectService, IBTTicketService ticketService)
+        public HomeController(ILogger<HomeController> logger, IBTCompanyInfoService companyService, IBTProjectService projectService, IBTTicketService ticketService, SignInManager<BTUser> signInManager)
         {
             _logger = logger;
             _companyInfoService = companyService;
             _projectService = projectService;
             _ticketService = ticketService;
+            _signInManager = signInManager;
         }
 
         #endregion
 
         #region INDEX
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            if (_signInManager.IsSignedIn(User))
+            {
+              await _signInManager.SignOutAsync();
+            }
             return View();
         }
         #endregion

@@ -3,118 +3,66 @@
 
 @{
     ViewData["Title"] = "Log in";
-
+    Layout = "";
 }
 
-<div class="ps-4 pe-4 ">
-    <h1>@ViewData["Title"]</h1>
-    <div class="row">
-        <div class="col-md-4">
-            <section>
-                <form method="post">
-                    <h4>Use a local account to log in.</h4>
-                    <hr />
-                    <div asp-validation-summary="All" class="text-danger"></div>
-                    <div class="form-group">
-                        <label asp-for="Input.Email"></label>
-                        <input id="userEmail" asp-for="Input.Email" class="form-control" />
-                        <span asp-validation-for="Input.Email" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Input.Password"></label>
-                        <input id="userPassword" asp-for="Input.Password" class="form-control" />
-                        <span asp-validation-for="Input.Password" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <div class="checkbox">
-                            <label asp-for="Input.RememberMe">
-                                <input id="userRememberMe" asp-for="Input.RememberMe" />
-                                @Html.DisplayNameFor(m => m.Input.RememberMe)
-                            </label>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>@ViewData["Title"]Bug Tracker</title>
+    <link href="~/css/styles.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+</head>
+
+<body class="bg-secondary">
+    <main>
+        <div class="container">
+            <div class="row justify-content-center align-content-center">
+                <div class="col-lg-5">
+                    <div class="card shadow-lg border-0 rounded-lg mt-5">
+                        <div class="card-header"><h3 class="text-center font-weight-light my-4">Login</h3></div>
+                        <div class="card-body">
+                            <form method="post">
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" asp-for="Input.Email" />
+                                    <label asp-for="Input.Email">Email address</label>
+                                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" asp-for="Input.Password" />
+                                    <label asp-for="Input.Password">Password</label>
+                                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <label asp-for="Input.RememberMe">
+                                        <input asp-for="Input.RememberMe" type="checkbox"/>
+                                        @Html.DisplayNameFor(m => m.Input.RememberMe)
+                                    </label>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                                    <a class="small" asp-page="./ForgotPassword">Forgot Password?</a>
+                                    <button class="btn btn-primary" type="submit">Login</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="card-footer text-center py-3">
+                            <div class="small"><a asp-page="./Register">Need an account? Sign up!</a></div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary">Log in</button>
-                    </div>
-
-                    <div class="form-group">
-                        <p>
-                            <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
-                        </p>
-                        <p>
-                            <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
-                        </p>
-                        <p>
-                            <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
-                        </p>
-                    </div>
-                </form>
-            </section>
+                </div>
+            </div>
         </div>
+    </main>
 
-        <div class="col-md-4">
-            <section>
-                <form method="post">
-                    <h4>Try demo accounts for a particular role!</h4>
-
-                    <div class="form-group mb-2">
-                        <button type="submit" class="btn btn-primary" asp-route-demoUserRole="admin">Demo Admin</button>
-                    </div>
-
-                    <div class="form-group mb-2">
-                        <button type="submit" class="btn btn-primary" asp-route-demoUserRole="pm">Demo Project Manager</button>
-                    </div>
-
-                    <div class="form-group mb-2">
-                        <button type="submit" class="btn btn-primary" asp-route-demoUserRole="developer">Demo Developer</button>
-                    </div>
-
-                    <div class="form-group mb-2">
-                        <button type="submit" class="btn btn-primary" asp-route-demoUserRole="submitter">Demo submitter</button>
-                    </div>
-
-                </form>
-            </section>
-
-
-            <!--
-            <div class="card">
-                <h5 class="font-weight-bolder">Admin Demo</h5>
-                <hr />
-                <h6>Email: demoadmin@bugtracker.com</h6>
-                <h6>Password: Abc&123!</h6>
-                <div class="card-footer"></div>
-            </div>
-
-            <div class="card">
-                <h5 class="font-weight-bolder">Project Manager Demo</h5>
-                <hr />
-                <h6>Email: demopm@bugtracker.com</h6>
-                <h6>Password: Abc&123!</h6>
-                <div class="card-footer"></div>
-            </div>
-
-            <div class="card">
-                <h5 class="font-weight-bolder">Developer Demo</h5>
-                <hr />
-                <h6>Email: demodev@bugtracker.com</h6>
-                <h6>Password: Abc&123!</h6>
-                <div class="card-footer"></div>
-            </div>
-
-            <div class="card">
-                <h5 class="font-weight-bolder">Submitter Demo</h5>
-                <hr />
-                <h6>Email: demosub@bugtracker.com</h6>
-                <h6>Password: Abc&123!</h6>
-                <div class="card-footer"></div>
-            </div>
-
-            -->
-        </div>
-    </div>
-</div>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+</body>
+</html>
